@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import styles from './Text.module.css';
 
-const Text = ({ children, variant }) => {
+const Text = ({ children, variant, className }) => {
   const variants = {
     large: styles.large,
     small: styles.small,
@@ -10,13 +10,14 @@ const Text = ({ children, variant }) => {
   };
 
   return (
-    <p className={variants[variant]}>{children}</p>
+    <p className={`${styles.text} ${variants[variant]} ${className}`}>{children}</p>
   );
 };
 
 Text.propTypes = {
   children: PropTypes.node.isRequired,
   variant: PropTypes.string,
+  className: PropTypes.string,
 };
 
 const LargeText = ({ children }) => (
@@ -35,8 +36,8 @@ ParagraphText.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const SmallText = ({ children }) => (
-  Text({ children, variant: 'small' })
+const SmallText = ({ children, className }) => (
+  Text({ children, variant: 'small', className })
 );
 
 SmallText.propTypes = {
