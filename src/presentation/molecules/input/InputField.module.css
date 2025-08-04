@@ -1,0 +1,14 @@
+.inputField {
+    gap: 0;
+
+}
+
+.inputField .label {
+    color: var(--gray-400);
+    text-align: start;
+}
+
+.inputField .error {
+    color: var(--error);
+    text-align: start;
+}
