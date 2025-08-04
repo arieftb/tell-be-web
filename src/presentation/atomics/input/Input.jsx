@@ -1,37 +1,47 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styles from './Input.module.css';
 
-function InputField ({
+function Input ({
   id,
   type = 'text',
   name,
   value,
   onChange,
   placeholder,
-  required
+  required = false,
+  disabled = false,
+  error = false,
 }) {
+  const handleOnChange = (e) => {
+    onChange(e.target.value);
+  };
+
   return (
     <input
       id={id}
       type={type}
       name={name}
       value={value}
-      onChange={onChange}
+      onChange={handleOnChange}
       placeholder={placeholder}
       required={required}
-      className="input-field"
+      className={`${styles.input} ${error ? styles.error : ''}`}
+      disabled={disabled}
     />
   );
 }
 
-InputField.defaultProps = {
+Input.propTypes = {
   id: PropTypes.string.isRequired,
   type: PropTypes.string,
   name: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
-  required: PropTypes.bool
+  required: PropTypes.bool,
+  disabled: PropTypes.bool,
+  error: PropTypes.bool,
 };
 
-export default InputField;
+export default Input;
