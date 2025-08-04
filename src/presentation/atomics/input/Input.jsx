@@ -12,6 +12,7 @@ function Input ({
   required = false,
   disabled = false,
   error = false,
+  maxLength = 255,
 }) {
   const handleOnChange = (e) => {
     onChange(e.target.value);
@@ -28,6 +29,7 @@ function Input ({
       required={required}
       className={`${styles.input} ${error ? styles.error : ''}`}
       disabled={disabled}
+      maxLength={maxLength}
     />
   );
 }
@@ -42,6 +44,7 @@ Input.propTypes = {
   required: PropTypes.bool,
   disabled: PropTypes.bool,
   error: PropTypes.bool,
+  maxLength: PropTypes.number,
 };
 
 export default Input;
