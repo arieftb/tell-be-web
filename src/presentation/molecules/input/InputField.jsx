@@ -1,7 +1,6 @@
 import { SmallText } from '../../atomics/text/Text.jsx';
 import PropTypes from 'prop-types';
 import Input from '../../atomics/input/Input.jsx';
-import { useState } from 'react';
 import styles from './InputField.module.css';
 
 const InputField = ({
@@ -10,38 +9,41 @@ const InputField = ({
   disabled = false,
   placeholder,
   onChange,
-  error = false,
   errorMessage,
+  type = 'text',
+  error = false,
   required = false,
+  maxLength = 255,
+  minLength = 0,
+  value = '',
+  inputMode,
 }) => {
-  const [value, setValue] = useState('');
-
   const errorText = error ? errorMessage : '';
 
-  const handleOnChange = (value) => {
-    setValue(value);
-    onChange(value);
+  const handleOnChange = (newValue) => {
+    onChange(newValue);
   };
 
   return (
-    <div className={`${styles.inputField}`}>
-      <SmallText className={`${styles.label}`}>{label}</SmallText>
+    <div className={styles.inputField}>
+      <SmallText className={styles.label}>{label}</SmallText>
       <Input
         id={id}
         name={id}
         placeholder={placeholder}
         value={value}
-        onChange={
-          value => handleOnChange(value)
-        }
+        onChange={handleOnChange}
         disabled={disabled}
         error={error}
-        required={required}/>
-      {
-        (errorText && (
-          <SmallText className={`${styles.error}`}>{errorText}</SmallText>
-        ))
-      }
+        required={required}
+        maxLength={maxLength}
+        minLength={minLength}
+        type={type}
+        inputMode={inputMode}
+      />
+      {errorText && (
+        <SmallText className={styles.error}>{errorText}</SmallText>
+      )}
     </div>
   );
 };
@@ -55,6 +57,24 @@ InputField.propTypes = {
   error: PropTypes.bool,
   errorMessage: PropTypes.string,
   required: PropTypes.bool,
+  maxLength: PropTypes.number,
+  minLength: PropTypes.number,
+  type: PropTypes.string,
+  value: PropTypes.string,
+  inputMode: PropTypes.string,
+};
+
+InputField.defaultProps = {
+  disabled: false,
+  placeholder: '',
+  error: false,
+  errorMessage: '',
+  required: false,
+  maxLength: 255,
+  minLength: 0,
+  type: 'text',
+  value: '',
+  inputMode: undefined,
 };
 
 export default InputField;
