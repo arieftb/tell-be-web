@@ -1,13 +1,9 @@
-import axios from 'axios';
+import AxiosClient from '../api/AxiosClient.js';
+import User from '../../../domain/user/model/User.js';
 
-async function register (name, email, password) {
-  const { data } = await axios.post('https://forum-api.dicoding.dev/v1/register', {
-    name: name,
-    email: email,
-    password: password,
-  });
-
-  return data.data.user;
+async function register (registerRequest) {
+  const { data } = await AxiosClient.post('/register', registerRequest);
+  return new User(data.data.user);
 }
 
 export { register };

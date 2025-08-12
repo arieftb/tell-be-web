@@ -31,14 +31,15 @@ H3.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const H4 = ({ children }) => (
-  <h4 className={styles.h4}>
+const H4 = ({ children, className }) => (
+  <h4 className={`${styles.h4} ${className || ''}`}>
     {children}
   </h4>
 );
 
 H4.propTypes = {
   children: PropTypes.node.isRequired,
+  className: PropTypes.string,
 };
 
 const H5 = ({ children }) => (
@@ -61,4 +62,4 @@ H6.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export { H1, H2 };
+export { H1, H2, H3, H4, H5, H6 };

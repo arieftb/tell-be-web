@@ -11,7 +11,6 @@ const PasswordInputField = ({
   required = false,
   maxLength = 255,
   minLength = 8,
-  validateStrength = false,
   value = '',
 }) => {
   const [error, setError] = useState(false);
@@ -38,21 +37,10 @@ const PasswordInputField = ({
       return false;
     }
 
-    if (valueToValidate.length > 0 && validateStrength) {
-      const strengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
-      if (!strengthRegex.test(valueToValidate)) {
-        setError(true);
-        setErrorMessage(
-          `${label} must contain uppercase, lowercase, number, and special character`
-        );
-        return false;
-      }
-    }
-
     setError(false);
     setErrorMessage('');
     return true;
-  }, [minLength, maxLength, required, validateStrength, label]);
+  }, [minLength, maxLength, required, label]);
 
   const handleChange = useCallback((newValue) => {
     validatePassword(newValue);
@@ -92,7 +80,6 @@ PasswordInputField.propTypes = {
   required: PropTypes.bool,
   maxLength: PropTypes.number,
   minLength: PropTypes.number,
-  validateStrength: PropTypes.bool,
   value: PropTypes.string,
 };
 
@@ -102,7 +89,6 @@ PasswordInputField.defaultProps = {
   required: false,
   maxLength: 255,
   minLength: 8,
-  validateStrength: false,
   value: '',
 };
 

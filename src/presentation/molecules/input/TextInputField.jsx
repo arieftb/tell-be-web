@@ -15,9 +15,11 @@ const TextInputField = ({
   minLength = 0,
   validationRegex,
   value = '',
+  inputMode,
 }) => {
   const [localError, setLocalError] = useState(false);
   const [localErrorMessage, setLocalErrorMessage] = useState('');
+  const [localValue, setLocalValue] = useState(value);
 
   const error = propError !== undefined ? propError : localError;
   const errorMessage = propErrorMessage !== undefined ? propErrorMessage : localErrorMessage;
@@ -54,18 +56,19 @@ const TextInputField = ({
     return true;
   }, [label, minLength, maxLength, required, validationRegex]);
 
-  const handleChange = useCallback((newValue) => {
-    if (propError === undefined) {
-      validateInput(newValue);
-    }
-    onChange(newValue);
-  }, [onChange, validateInput, propError]);
-
   useEffect(() => {
     if (value) {
       validateInput(value);
     }
   }, [value, validateInput]);
+
+  const handleInputChange = useCallback((newValue) => {
+    setLocalValue(newValue);
+    if (propError === undefined) {
+      validateInput(newValue);
+    }
+    onChange(newValue);
+  }, [onChange, validateInput, propError]);
 
   return (
     <InputField
@@ -73,14 +76,15 @@ const TextInputField = ({
       label={label}
       disabled={disabled}
       placeholder={placeholder}
-      onChange={handleChange}
+      onChange={handleInputChange}
       error={error}
       errorMessage={errorMessage}
       required={required}
       maxLength={maxLength}
       minLength={minLength}
-      value={value}
+      value={localValue}
       type="text"
+      inputMode={inputMode}
     />
   );
 };
@@ -98,6 +102,7 @@ TextInputField.propTypes = {
   minLength: PropTypes.number,
   validationRegex: PropTypes.instanceOf(RegExp),
   value: PropTypes.string,
+  inputMode: PropTypes.string,
 };
 
 TextInputField.defaultProps = {
@@ -110,6 +115,7 @@ TextInputField.defaultProps = {
   minLength: 0,
   validationRegex: undefined,
   value: '',
+  inputMode: undefined,
 };
 
 export default TextInputField;

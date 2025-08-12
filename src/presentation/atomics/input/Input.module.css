@@ -5,6 +5,8 @@
     border: 1px solid var(--gray-200);
     background-color: #fff;
     color: var(--gray-900);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .input:hover {
