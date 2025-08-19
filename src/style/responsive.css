@@ -1,0 +1,59 @@
+/* Global responsive styles */
+
+/* Box sizing for all elements */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Base responsive styles */
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+    html {
+        font-size: 95%;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 90%;
+    }
+}
+
+/* Responsive containers */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+}
+
+/* Touch-friendly elements for mobile */
+@media (max-width: 480px) {
+    button,
+    input,
+    select,
+    textarea,
+    a {
+        min-height: 44px; /* Minimum touch target size */
+    }
+}

@@ -1,0 +1,96 @@
+/* Base button styles */
+.button {
+    max-height: 40px;
+    padding: 8px 24px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-family: var(--font-primary), sans-serif;
+    font-weight: var(--font-weight-regular);
+    width: 100%;
+}
+
+/* Size variants - Only padding changed */
+.button.medium {
+    padding: 8px 16px;
+    max-height: 32px;
+}
+
+.button.large {
+    padding: 12px 24px;
+    max-height: 48px;
+}
+
+/* Responsive padding for buttons on smaller screens */
+@media (max-width: 480px) {
+    .button {
+        padding: 8px 16px;
+    }
+
+    .button.large {
+        padding: 10px 20px;
+    }
+}
+
+.button.small {
+    padding: 0 8px;
+    max-height: 24px; /* Added for touch target */
+}
+
+/* Primary variant - Your EXACT colors */
+.button.primary {
+    color: #fff;
+    background-color: var(--blue-500);
+    outline: none;
+}
+
+.button.primary:hover {
+    background-color: var(--blue-400);
+}
+
+.button.primary:focus {
+    background-color: var(--blue-600);
+    box-shadow: 0 0 0 4px rgba(181, 200, 214, 0.4);
+}
+
+.button.primary:active {
+    background-color: var(--blue-800);
+}
+
+.button.primary:disabled {
+    background-color: rgba(8, 71, 119, 0.5);
+    cursor: not-allowed;
+}
+
+/* Secondary variant - Your EXACT colors */
+.button.secondary {
+    color: var(--gray-900);
+    background-color: #fff;
+    border: 1px solid var(--gray-200);
+}
+
+.button.secondary:hover {
+    background-color: var(--gray-50);
+}
+
+.button.secondary:focus {
+    box-shadow: 0 0 0 4px rgba(231, 231, 230, 0.75);
+    background-color: var(--gray-50);
+}
+
+.button.secondary:active {
+    background-color: var(--gray-100);
+    border-color: var(--gray-200);
+}
+
+.button.secondary:disabled {
+    color: rgba(22, 22, 19, 0.5);
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    border-color: rgba(154, 154, 152, 0.5);
+}

@@ -1,0 +1,47 @@
+:root {
+    /*
+    Color Palette
+    */
+
+
+    /* Blue Palette */
+    --blue-900: #022047;
+    --blue-800: #042F5A;
+    --blue-700: #063764;
+    --blue-600: #07406F;
+    --blue-500: #084777;
+    --blue-400: #2D6388;
+    --blue-300: #527EA0;
+    --blue-200: #84A3BB;
+    --blue-100: #B5C8D6;
+    --blue-50: #E1E9EF;
+
+    /* Gray Palette */
+    --gray-900: #161613;
+    --gray-800: #22221F;
+    --gray-700: #282825;
+    --gray-600: #30302C;
+    --gray-500: #353531;
+    --gray-400: #535350;
+    --gray-300: #72726F;
+    --gray-200: #9A9A98;
+    --gray-100: #C2C2C1;
+    --gray-50: #E7E7E6;
+
+    --white: #FFFFFF;
+    --black: #000000;
+
+    /* Semantic Colors */
+    --error: #FF0000;
+    --success: #398920;
+    --warning: #FFA500;
+    --primary: var(--blue-500);
+    --secondary: var(--gray-400);
+
+
+    /*
+    Typography
+    */
+    --font-primary: 'Open Sans';
+    --font-weight-regular: 400;
+}

@@ -1,0 +1,54 @@
+/* Link.module.css - Simplified (No Variants) */
+
+/* Base Link Styles */
+.link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-family: var(--font-primary), sans-serif;
+    color: var(--blue-500); /* Your primary color */
+}
+
+/* Interactive States */
+.link:hover {
+    color: var(--blue-600); /* Hover color */
+    text-decoration: underline;
+}
+
+.link:focus-visible {
+    outline: 2px solid var(--blue-100);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.link:active {
+    color: var(--blue-800);
+    text-decoration: underline;
+}
+
+/* Disabled State */
+.link.disabled {
+    color: var(--gray-300) !important; /* Force disabled color */
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.7;
+    text-decoration: none;
+}
+
+/* Active Route State */
+.link[aria-current="page"] {
+    font-weight: 600;
+    text-decoration: underline;
+    color: var(--blue-800);
+}
+
+/* External Link Indicator */
+.link.external::after {
+    content: "↗";
+    margin-left: 4px;
+    display: inline-block;
+    font-size: 0.9em;
+}
