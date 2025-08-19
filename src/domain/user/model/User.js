@@ -8,8 +8,12 @@ class User {
       throw new Error('USER.INVALID_NAME');
     }
 
-    if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      throw new Error('USER.INVALID_EMAIL');
+    if (email && typeof email === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.email = null;
+    } else if (!email || typeof email !== 'string') {
+      this.email = null;
+    } else {
+      this.email = email;
     }
 
     if (!avatar || typeof avatar !== 'string' || !avatar.startsWith('http')) {

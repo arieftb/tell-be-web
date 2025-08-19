@@ -5,4 +5,9 @@ async function getAllThreads () {
   return data.data.threads;
 }
 
-export { getAllThreads };
+async function getThreadDetail (threadId) {
+  const { data } = await AxiosClient.get(`/threads/${threadId}`);
+  return data.data.detailThread;
+}
+
+export { getAllThreads, getThreadDetail };

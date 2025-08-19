@@ -52,8 +52,8 @@ H5.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const H6 = ({ children }) => (
-  <h6 className={styles.h6}>
+const H6 = ({ children, className }) => (
+  <h6 className={`${styles.h6} ${className || ''}`}>
     {children}
   </h6>
 );

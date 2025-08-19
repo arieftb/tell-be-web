@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { H5 } from '../../atoms/text/Heading.jsx';
 import { SmallText } from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import styles from './ThreadItem.module.css';
 
 function ThreadItem ({ thread }) {
-  const { title, body, category, createdAt, ownerName, ownerAvatar, totalComments } = thread;
+  const { id, title, body, category, createdAt, ownerName, ownerAvatar, totalComments } = thread;
 
   // Basic date formatting
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
@@ -16,19 +17,21 @@ function ThreadItem ({ thread }) {
   });
 
   return (
-    <div className={styles.threadItem}>
-      <div className={styles.category}>#{category}</div>
-      <H5 className={styles.title}>{title}</H5>
-      <div className={styles.body} dangerouslySetInnerHTML={{ __html: body }}/>
-      <div className={styles.meta}>
-        <div className={styles.ownerInfo}>
-          <Avatar src={ownerAvatar} alt={ownerName} size="small"/>
-          <SmallText>{ownerName}</SmallText>
+    <Link to={`/threads/${id}`} className={styles.threadItemLink}>
+      <div className={styles.threadItem}>
+        <div className={styles.category}>#{category}</div>
+        <H5 className={styles.title}>{title}</H5>
+        <div className={styles.body} dangerouslySetInnerHTML={{ __html: body }}/>
+        <div className={styles.meta}>
+          <div className={styles.ownerInfo}>
+            <Avatar src={ownerAvatar} alt={ownerName} size="small"/>
+            <SmallText>{ownerName}</SmallText>
+          </div>
+          <SmallText>On: {formattedDate}</SmallText>
+          <SmallText>Comments: {totalComments}</SmallText>
         </div>
-        <SmallText>On: {formattedDate}</SmallText>
-        <SmallText>Comments: {totalComments}</SmallText>
       </div>
-    </div>
+    </Link>
   );
 }
 

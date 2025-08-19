@@ -7,6 +7,21 @@
     text-align: left;
 }
 
+.threadItemLink {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Ensure the link takes full width */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.threadItemLink:hover .threadItem {
+    background-color: var(--gray-50); /* Slightly darker background on hover */
+}
+
+.threadItemLink:hover {
+    text-decoration: none; /* Ensure no underline on hover */
+}
+
 .threadItem .category {
     font-size: 0.8rem;
     color: var(--blue-600);
@@ -33,6 +48,7 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    font-weight: normal;
 }
 
 .threadItem .meta {

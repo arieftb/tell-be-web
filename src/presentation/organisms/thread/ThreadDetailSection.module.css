@@ -1,0 +1,9 @@
+.threadDetailSection {
+    padding: 1rem;
+}
+
+.message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--gray-600);
+}
