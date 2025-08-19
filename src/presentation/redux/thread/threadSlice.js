@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import GetAllThreadsUseCase from '../../../application/thread/GetAllThreadsUseCase.js';
 import GetThreadDetailUseCase from '../../../application/thread/GetThreadDetailUseCase.js';
+import SubmitCommentUseCase from '../../../application/thread/SubmitCommentUseCase.js';
 
 export const fetchThreads = createAsyncThunk(
   'threads/fetchThreads',
@@ -28,6 +29,19 @@ export const fetchThreadDetail = createAsyncThunk(
   },
 );
 
+export const submitComment = createAsyncThunk(
+  'threads/submitComment',
+  async (commentData, { rejectWithValue }) => {
+    try {
+      const submitCommentUseCase = new SubmitCommentUseCase();
+      return await submitCommentUseCase.execute(commentData);
+    } catch (error) {
+      const errorMessage = error.message || 'Failed to submit comment';
+      return rejectWithValue(errorMessage);
+    }
+  },
+);
+
 const threadSlice = createSlice({
   name: 'threads',
   initialState: {
@@ -37,6 +51,8 @@ const threadSlice = createSlice({
     detailThread: null,
     detailThreadStatus: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
     detailThreadError: null,
+    submitCommentStatus: 'idle',
+    submitCommentError: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -66,6 +82,21 @@ const threadSlice = createSlice({
         state.detailThreadStatus = 'failed';
         state.detailThreadError = action.payload;
         state.detailThread = null;
+      })
+      .addCase(submitComment.pending, (state) => {
+        state.submitCommentStatus = 'loading';
+      })
+      .addCase(submitComment.fulfilled, (state, action) => {
+        state.submitCommentStatus = 'succeeded';
+        state.detailThread = {
+          ...state.detailThread,
+          comments: [action.payload, ...state.detailThread.comments],
+        };
+        state.submitCommentError = null;
+      })
+      .addCase(submitComment.rejected, (state, action) => {
+        state.submitCommentStatus = 'failed';
+        state.submitCommentError = action.payload;
       });
   },
 });
@@ -76,5 +107,7 @@ export const selectThreadsError = (state) => state.threads.error;
 export const selectDetailThread = (state) => state.threads.detailThread;
 export const selectDetailThreadStatus = (state) => state.threads.detailThreadStatus;
 export const selectDetailThreadError = (state) => state.threads.detailThreadError;
+export const selectSubmitCommentStatus = (state) => state.threads.submitCommentStatus;
+export const selectSubmitCommentError = (state) => state.threads.submitCommentError;
 
 export default threadSlice.reducer;

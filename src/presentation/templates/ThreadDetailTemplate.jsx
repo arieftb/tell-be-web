@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Header from '../organisms/header/Header.jsx';
 import ThreadDetailSection from '../organisms/thread/ThreadDetailSection.jsx';
+import CommentInputSection from '../organisms/comment/CommentInputSection.jsx';
 import CommentSection from '../organisms/comment/CommentSection.jsx';
 import styles from './ThreadDetailTemplate.module.css';
 
@@ -11,6 +12,7 @@ function ThreadDetailTemplate ({ thread, status, error }) {
       <Header/>
       <main className={styles.mainContent}>
         <ThreadDetailSection thread={thread} status={status} error={error}/>
+        <CommentInputSection/>
         {thread && thread.comments && (
           <CommentSection comments={thread.comments}/>
         )}
