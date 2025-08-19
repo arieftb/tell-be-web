@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ThreadItem from '../../molecules/thread/ThreadItem.jsx';
+import LoadingBar from '../../atoms/loadingbar/LoadingBar.jsx';
 import styles from './ThreadList.module.css';
 
 function ThreadList ({ threads, status, error }) {
   if (status === 'loading') {
-    return <div className={styles.message}>Loading threads...</div>;
+    return <LoadingBar/>;
   }
 
   if (status === 'failed') {
