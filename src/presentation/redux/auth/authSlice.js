@@ -53,12 +53,18 @@ const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: null,
-    token: null,
+    token: new AuthRepository().getToken(),
     status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
     error: null,
   },
   reducers: {
-    // No direct actions needed for registration
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.status = 'idle';
+      state.error = null;
+      new AuthRepository().removeToken();
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -108,6 +114,8 @@ const authSlice = createSlice({
       });
   },
 });
+
+export const { logout } = authSlice.actions;
 
 export const selectAuthStatus = (state) => state.auth.status;
 export const selectAuthError = (state) => state.auth.error;
