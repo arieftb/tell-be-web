@@ -4,6 +4,7 @@ import './style/responsive.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import RegisterPage from './presentation/pages/RegisterPage.jsx';
 import LoginPage from './presentation/pages/LoginPage.jsx';
+import HomePage from './presentation/pages/HomePage.jsx';
 
 function App () {
   return (
@@ -11,8 +12,9 @@ function App () {
       <Routes>
         <Route path="/register" element={<RegisterPage/>}/>
         <Route path="/login" element={<LoginPage/>}/>
-        {/* Add a default route or redirect if needed */}
-        <Route path="*" element={<LoginPage/>}/>
+        <Route path="/" element={<HomePage/>}/>
+        {/* Fallback to home page if no other route matches */}
+        <Route path="*" element={<HomePage/>}/>
       </Routes>
     </BrowserRouter>
   );

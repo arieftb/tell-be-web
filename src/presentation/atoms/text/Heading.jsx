@@ -42,8 +42,8 @@ H4.propTypes = {
   className: PropTypes.string,
 };
 
-const H5 = ({ children }) => (
-  <h5 className={styles.h5}>
+const H5 = ({ children, className }) => (
+  <h5 className={`${styles.h5} ${className || ''}`}>
     {children}
   </h5>
 );
