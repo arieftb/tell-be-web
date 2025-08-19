@@ -1,0 +1,61 @@
+.loginForm {
+    width: 75%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Responsive adjustments for different screen sizes */
+@media (max-width: 768px) {
+    .loginForm {
+        width: 85%;
+    }
+}
+
+@media (max-width: 480px) {
+    .loginForm {
+        width: 95%;
+    }
+}
+
+
+.loginForm .title {
+    padding: 16px 0;
+    gap: 16px;
+    color: var(--gray-900);
+    text-align: start;
+    margin: 0 0;
+}
+
+.loginForm .form {
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.loginForm .register {
+    width: 100%;
+    text-align: center;
+    color: var(--gray-900);
+}
+
+.successMessage {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.errorMessage {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500;
+}

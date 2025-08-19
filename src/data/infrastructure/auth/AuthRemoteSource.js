@@ -6,4 +6,9 @@ async function register (registerRequest) {
   return new User(data.data.user);
 }
 
-export { register };
+async function login (loginRequest) {
+  const { data } = await AxiosClient.post('/login', loginRequest);
+  return data.data;
+}
+
+export { register, login };

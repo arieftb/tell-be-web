@@ -18,3 +18,10 @@ export class DuplicateEmailError extends Error {
     this.name = 'DuplicateEmailError';
   }
 }
+
+export class AuthenticationError extends Error {
+  constructor (message) {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
