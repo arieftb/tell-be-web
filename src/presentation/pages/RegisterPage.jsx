@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser, selectAuthError, selectAuthStatus } from '../redux/auth/authSlice.js';
+import { registerAndLoginUser, selectAuthError, selectAuthStatus } from '../redux/auth/authSlice.js';
 import RegisterTemplate from './RegisterTemplate.jsx';
 
 export default function RegisterPage () {
@@ -9,7 +9,7 @@ export default function RegisterPage () {
   const error = useSelector(selectAuthError);
 
   const handleSubmit = (formData) => {
-    dispatch(registerUser(formData));
+    dispatch(registerAndLoginUser(formData));
   };
 
   return (
