@@ -2,7 +2,7 @@ import { login, register } from '../../infrastructure/auth/AuthRemoteSource.js';
 import {
   AuthenticationError,
   DuplicateEmailError,
-  RegistrationError
+  RegistrationError,
 } from '../../../domain/auth/model/AuthExceptions.js';
 
 export class AuthRepository {
@@ -21,7 +21,8 @@ export class AuthRepository {
         }
         throw new RegistrationError('Failed to register. Please try again.');
       }
-      throw new RegistrationError('Network error. Please check your connection.');
+      throw new RegistrationError(
+        'Network error. Please check your connection.');
     }
   }
 
@@ -41,7 +42,8 @@ export class AuthRepository {
         }
         throw new AuthenticationError('Failed to login. Please try again.');
       }
-      throw new AuthenticationError('Network error. Please check your connection.');
+      throw new AuthenticationError(
+        'Network error. Please check your connection.');
     }
   }
 

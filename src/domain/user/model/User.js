@@ -4,11 +4,17 @@ class User {
       throw new Error('USER.MISSING_REQUIRED_PROPERTIES');
     }
 
-    if (!name || typeof name !== 'string' || name.length < 1 || name.length > 255) {
+    if (
+      !name || typeof name !== 'string' ||
+      name.length < 1 || name.length > 255
+    ) {
       throw new Error('USER.INVALID_NAME');
     }
 
-    if (email && typeof email === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (
+      email && typeof email === 'string' &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
       this.email = null;
     } else if (!email || typeof email !== 'string') {
       this.email = null;

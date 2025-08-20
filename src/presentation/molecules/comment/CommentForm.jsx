@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import styles from './CommentForm.module.css';
 import Button from '../../atoms/button/Button.jsx';
-import { selectSubmitCommentStatus, submitComment } from '../../redux/thread/threadSlice.js';
+import { selectSubmitCommentStatus, submitComment, } from '../../redux/thread/threadSlice.js';
 import { H5 } from '../../atoms/text/Heading.jsx';
 
 const CommentForm = () => {

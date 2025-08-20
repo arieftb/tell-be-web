@@ -6,11 +6,16 @@ const Text = ({ children, variant, className }) => {
     large: styles.large,
     small: styles.small,
     paragraph: styles.paragraph,
-    x_small: styles.xSmall
+    x_small: styles.xSmall,
   };
 
   return (
-    <p className={`${styles.text} ${variants[variant]} ${className}`}>{children}</p>
+    <p className={`
+      ${styles.text} 
+      ${variants[variant]} 
+      ${className}`}>
+      {children}
+    </p>
   );
 };
 

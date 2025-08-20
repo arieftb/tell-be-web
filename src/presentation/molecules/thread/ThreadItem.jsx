@@ -7,7 +7,10 @@ import Avatar from '../../atoms/avatar/Avatar.jsx';
 import styles from './ThreadItem.module.css';
 
 function ThreadItem ({ thread }) {
-  const { id, title, body, category, createdAt, ownerName, ownerAvatar, totalComments } = thread;
+  const {
+    id, title, body, category, createdAt, ownerName,
+    ownerAvatar, totalComments,
+  } = thread;
 
   // Basic date formatting
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {

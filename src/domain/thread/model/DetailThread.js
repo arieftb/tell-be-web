@@ -2,8 +2,14 @@ import User from '../../../domain/user/model/User.js';
 import Comment from './Comment.js';
 
 export default class DetailThread {
-  constructor ({ id, title, body, category, createdAt, owner, upVotesBy, downVotesBy, comments }) {
-    if (!id || !title || !body || !category || !createdAt || !owner || !upVotesBy || !downVotesBy || !comments) {
+  constructor ({
+    id, title, body, category, createdAt, owner,
+    upVotesBy, downVotesBy, comments,
+  }) {
+    if (
+      !id || !title || !body || !category || !createdAt || !owner ||
+      !upVotesBy || !downVotesBy || !comments
+    ) {
       throw new Error('DETAIL_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }
 
@@ -29,6 +35,6 @@ export default class DetailThread {
     this.owner = new User(owner);
     this.upVotesBy = upVotesBy;
     this.downVotesBy = downVotesBy;
-    this.comments = comments.map(comment => new Comment(comment));
+    this.comments = comments.map((comment) => new Comment(comment));
   }
 }

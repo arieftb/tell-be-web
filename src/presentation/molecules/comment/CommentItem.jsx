@@ -22,7 +22,10 @@ function CommentItem ({ comment }) {
         </div>
         <SmallText>{formattedDate}</SmallText>
       </div>
-      <div className={styles.commentContent} dangerouslySetInnerHTML={{ __html: content }}/>
+      <div
+        className={styles.commentContent}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
     </div>
   );
 }

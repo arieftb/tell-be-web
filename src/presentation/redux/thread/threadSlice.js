@@ -105,9 +105,13 @@ export const selectAllThreads = (state) => state.threads.threads;
 export const selectThreadsStatus = (state) => state.threads.status;
 export const selectThreadsError = (state) => state.threads.error;
 export const selectDetailThread = (state) => state.threads.detailThread;
-export const selectDetailThreadStatus = (state) => state.threads.detailThreadStatus;
-export const selectDetailThreadError = (state) => state.threads.detailThreadError;
-export const selectSubmitCommentStatus = (state) => state.threads.submitCommentStatus;
-export const selectSubmitCommentError = (state) => state.threads.submitCommentError;
+export const selectDetailThreadStatus = (state) =>
+  state.threads.detailThreadStatus;
+export const selectDetailThreadError = (state) =>
+  state.threads.detailThreadError;
+export const selectSubmitCommentStatus = (state) =>
+  state.threads.submitCommentStatus;
+export const selectSubmitCommentError = (state) =>
+  state.threads.submitCommentError;
 
 export default threadSlice.reducer;

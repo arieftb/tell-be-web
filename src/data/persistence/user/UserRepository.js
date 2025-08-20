@@ -5,7 +5,7 @@ export class UserRepository {
   async getAllUsers () {
     try {
       const usersData = await getAllUsers();
-      return usersData.map(user => new User(user));
+      return usersData.map((user) => new User(user));
     } catch (error) {
       console.error('Error fetching users:', error);
       throw error;

@@ -9,26 +9,25 @@ import { SmallText } from '../../atoms/text/Text.jsx';
 const LoginForm = ({ onSubmit, isSubmitting, successMessage, errorMessage }) => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [formErrors, setFormErrors] = useState({
     email: false,
-    password: false
+    password: false,
   });
 
   const handleInputChange = (field) => (value) => {
-
     // Clear error for this field
     if (formErrors[field]) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
-        [field]: false
+        [field]: false,
       }));
     }
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -41,7 +40,8 @@ const LoginForm = ({ onSubmit, isSubmitting, successMessage, errorMessage }) => 
       newErrors.email = true;
       valid = false;
     } else {
-      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+      // eslint-disable-next-line max-len
+      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,6}$/;
       if (!emailRegex.test(formData.email)) {
         newErrors.email = true;
         valid = false;

@@ -1,4 +1,4 @@
-import { ThreadRepository } from '../../data/persistence/thread/ThreadRepository.js';
+import { ThreadRepository, } from '../../data/persistence/thread/ThreadRepository.js';
 import GetAllUsersUseCase from '../user/GetAllUsersUseCase.js';
 
 export default class GetAllThreadsUseCase {
@@ -11,8 +11,8 @@ export default class GetAllThreadsUseCase {
     const threads = await this.threadRepository.getAllThreads();
     const users = await this.getAllUsersUseCase.execute();
 
-    return threads.map(thread => {
-      const owner = users.find(user => user.id === thread.ownerId);
+    return threads.map((thread) => {
+      const owner = users.find((user) => user.id === thread.ownerId);
       return {
         ...thread,
         ownerName: owner ? owner.name : 'Unknown',

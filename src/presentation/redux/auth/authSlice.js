@@ -12,7 +12,8 @@ export const registerUser = createAsyncThunk(
       const registerUseCase = new RegisterUseCase(authRepository);
       return await registerUseCase.execute(userData);
     } catch (error) {
-      const errorMessage = error.message || 'Failed to register';
+      const errorMessage = error.message ||
+        'Failed to register';
       return rejectWithValue(errorMessage);
     }
   },
@@ -28,7 +29,8 @@ export const loginUser = createAsyncThunk(
       // Optionally, fetch user data using the token if needed
       return { token };
     } catch (error) {
-      const errorMessage = error.message || 'Failed to login';
+      const errorMessage = error.message ||
+        'Failed to login';
       return rejectWithValue(errorMessage);
     }
   },
@@ -39,11 +41,13 @@ export const registerAndLoginUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const authRepository = new AuthRepository();
-      const registerAndLoginUseCase = new RegisterAndLoginUseCase(authRepository);
+      const registerAndLoginUseCase =
+        new RegisterAndLoginUseCase(authRepository);
       const token = await registerAndLoginUseCase.execute(userData);
       return { token };
     } catch (error) {
-      const errorMessage = error.message || 'Failed to register and login';
+      const errorMessage = error.message ||
+        'Failed to register and login';
       return rejectWithValue(errorMessage);
     }
   },
@@ -75,7 +79,8 @@ const authSlice = createSlice({
         state.status = 'succeeded';
         state.user = action.payload;
         state.error = null;
-        // Assuming token is handled elsewhere or not directly returned by the use case
+        // Assuming token is handled elsewhere or not directly returned
+        // by the use case
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = 'failed';
@@ -104,7 +109,8 @@ const authSlice = createSlice({
         state.status = 'succeeded';
         state.token = action.payload.token;
         state.error = null;
-        state.user = null; // User data is not returned by this combined use case
+        state.user = null;
+        // User data is not returned by this combined use case
       })
       .addCase(registerAndLoginUser.rejected, (state, action) => {
         state.status = 'failed';

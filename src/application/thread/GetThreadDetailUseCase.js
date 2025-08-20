@@ -1,4 +1,4 @@
-import { ThreadRepository } from '../../data/persistence/thread/ThreadRepository.js';
+import { ThreadRepository, } from '../../data/persistence/thread/ThreadRepository.js';
 
 export default class GetThreadDetailUseCase {
   constructor () {

@@ -4,7 +4,7 @@ import LoginForm from '../organisms/form/LoginForm.jsx';
 import PropTypes from 'prop-types';
 
 export default function LoginTemplate (
-  { handleSubmit, status, error }
+  { handleSubmit, status, error },
 ) {
   return (
     <section className={styles['login-template']}>

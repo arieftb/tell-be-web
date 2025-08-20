@@ -4,7 +4,9 @@ import Header from '../organisms/header/Header.jsx';
 import ThreadList from '../organisms/thread/ThreadList.jsx';
 import styles from './HomeTemplate.module.css';
 
-function HomeTemplate ({ threads, status, error }) {
+function HomeTemplate (
+  { threads, status, error },
+) {
   return (
     <div className={styles.homeTemplate}>
       <Header/>

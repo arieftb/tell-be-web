@@ -4,14 +4,15 @@ import SignUpForm from '../organisms/form/SignUpForm.jsx';
 import PropTypes from 'prop-types';
 
 export default function RegisterTemplate (
-  { handleSubmit, status, error }
+  { handleSubmit, status, error },
 ) {
   return (
     <section className={styles['register-template']}>
       <SignUpForm
         onSubmit={handleSubmit}
         isSubmitting={status === 'loading'}
-        successMessage={status === 'succeeded' ? 'Registration successful!' : ''}
+        successMessage={status === 'succeeded' ?
+          'Registration successful!' : ''}
         errorMessage={status === 'failed' ? error : ''}
       />
     </section>

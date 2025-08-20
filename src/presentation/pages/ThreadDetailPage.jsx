@@ -5,7 +5,7 @@ import {
   fetchThreadDetail,
   selectDetailThread,
   selectDetailThreadError,
-  selectDetailThreadStatus
+  selectDetailThreadStatus,
 } from '../redux/thread/threadSlice.js';
 import ThreadDetailTemplate from '../templates/ThreadDetailTemplate.jsx';
 
@@ -17,7 +17,10 @@ function ThreadDetailPage () {
   const error = useSelector(selectDetailThreadError);
 
   useEffect(() => {
-    if (status === 'idle' || (status === 'succeeded' && thread && thread.id !== threadId)) {
+    if (
+      status === 'idle' ||
+      (status === 'succeeded' && thread && thread.id !== threadId)
+    ) {
       dispatch(fetchThreadDetail(threadId));
     }
   }, [threadId, status, thread, dispatch]);

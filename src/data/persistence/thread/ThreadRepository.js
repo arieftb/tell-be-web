@@ -1,4 +1,4 @@
-import { getAllThreads, getThreadDetail, submitComment } from '../../infrastructure/thread/ThreadRemoteSource.js';
+import { getAllThreads, getThreadDetail, submitComment, } from '../../infrastructure/thread/ThreadRemoteSource.js';
 import Thread from '../../../domain/thread/model/Thread.js';
 import DetailThread from '../../../domain/thread/model/DetailThread.js';
 import Comment from '../../../domain/thread/model/Comment.js';
@@ -7,7 +7,7 @@ export class ThreadRepository {
   async getAllThreads () {
     try {
       const threadsData = await getAllThreads();
-      return threadsData.map(thread => new Thread(thread));
+      return threadsData.map((thread) => new Thread(thread));
     } catch (error) {
       // Handle errors, e.g., network issues, API errors
       console.error('Error fetching threads:', error);

@@ -4,7 +4,7 @@ import {
   fetchThreads,
   selectAllThreads,
   selectThreadsError,
-  selectThreadsStatus
+  selectThreadsStatus,
 } from '../redux/thread/threadSlice.js';
 import HomeTemplate from '../templates/HomeTemplate.jsx';
 
