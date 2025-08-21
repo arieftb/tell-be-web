@@ -5,4 +5,9 @@ async function getAllUsers() {
   return data.data.users;
 }
 
-export {getAllUsers};
+async function getLeaderboards() {
+  const {data} = await AxiosClient.get('/leaderboards');
+  return data.data.leaderboards;
+}
+
+export {getAllUsers, getLeaderboards};

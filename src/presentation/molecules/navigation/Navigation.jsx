@@ -22,7 +22,7 @@ function Navigation() {
     <nav className={styles.navigation}>
       <ul>
         <NavigationItem to="/">Home</NavigationItem>
-        <NavigationItem to="/leaderboard">Leaderboard</NavigationItem>
+        <NavigationItem to="/leaderboards">Leaderboard</NavigationItem>
         {token ?
           (
             <NavigationItem to="/logout" onClick={handleLogout}>

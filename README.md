@@ -19,6 +19,7 @@ and scalable codebase. The application includes user authentication, thread and 
 - View thread detail
 - Submit a comment
 - Submit new thread
+- View leaderboard
 
 ## Installation
 
