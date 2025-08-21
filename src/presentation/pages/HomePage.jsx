@@ -7,12 +7,14 @@ import {
   selectThreadsStatus,
 } from '../redux/thread/threadSlice.js';
 import HomeTemplate from '../templates/HomeTemplate.jsx';
+import { selectIsLoggedIn } from '../redux/auth/authSlice.js';
 
 function HomePage () {
   const dispatch = useDispatch();
   const threads = useSelector(selectAllThreads);
   const status = useSelector(selectThreadsStatus);
   const error = useSelector(selectThreadsError);
+  const isLoggedIn = useSelector(selectIsLoggedIn);
 
   useEffect(() => {
     if (status === 'idle') {
@@ -21,7 +23,7 @@ function HomePage () {
   }, [status, dispatch]);
 
   return (
-    <HomeTemplate threads={threads} status={status} error={error}/>
+    <HomeTemplate threads={threads} status={status} error={error} isLoggedIn={isLoggedIn}/>
   );
 }
 

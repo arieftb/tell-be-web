@@ -1,11 +1,10 @@
 export default class Thread {
   constructor ({
     id, title, body, category, createdAt, ownerId,
-    totalComments, upVotesBy, downVotesBy,
+    totalComments = 0, upVotesBy = [], downVotesBy = [],
   }) {
     if (
-      !id || !title || !body || !category || !createdAt || !ownerId ||
-      !totalComments || !upVotesBy || !downVotesBy
+      !id || !title || !body || !category || !createdAt || !ownerId
     ) {
       throw new Error('THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }

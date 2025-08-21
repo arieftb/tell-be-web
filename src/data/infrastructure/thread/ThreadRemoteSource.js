@@ -22,4 +22,18 @@ async function submitComment ({ threadId, content }) {
   return data.data.comment;
 }
 
-export { getAllThreads, getThreadDetail, submitComment };
+async function submitThread ({ title, body, category }) {
+  const token = localStorage.getItem('accessToken');
+  const { data } = await AxiosClient.post('/threads', {
+    title,
+    body,
+    category,
+  }, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return data.data.thread;
+}
+
+export { getAllThreads, getThreadDetail, submitComment, submitThread };

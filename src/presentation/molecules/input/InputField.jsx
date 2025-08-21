@@ -17,6 +17,8 @@ const InputField = ({
   minLength = 0,
   value = '',
   inputMode,
+  multiline = false,
+  rows = 3,
 }) => {
   const errorText = error ? errorMessage : '';
 
@@ -40,6 +42,8 @@ const InputField = ({
         minLength={minLength}
         type={type}
         inputMode={inputMode}
+        multiline={multiline}
+        rows={rows}
       />
       {errorText && (
         <SmallText className={styles.error}>{errorText}</SmallText>
@@ -62,6 +66,8 @@ InputField.propTypes = {
   type: PropTypes.string,
   value: PropTypes.string,
   inputMode: PropTypes.string,
+  multiline: PropTypes.bool,
+  rows: PropTypes.number,
 };
 
 InputField.defaultProps = {
@@ -75,6 +81,8 @@ InputField.defaultProps = {
   type: 'text',
   value: '',
   inputMode: undefined,
+  multiline: false,
+  rows: 3,
 };
 
 export default InputField;

@@ -6,6 +6,7 @@ import RegisterPage from './presentation/pages/RegisterPage.jsx';
 import LoginPage from './presentation/pages/LoginPage.jsx';
 import HomePage from './presentation/pages/HomePage.jsx';
 import ThreadDetailPage from './presentation/pages/ThreadDetailPage.jsx';
+import ThreadSubmitPage from './presentation/pages/ThreadSubmitPage.jsx';
 
 function App () {
   return (
@@ -15,6 +16,7 @@ function App () {
         <Route path="/login" element={<LoginPage/>}/>
         <Route path="/" element={<HomePage/>}/>
         <Route path="/threads/:threadId" element={<ThreadDetailPage/>}/>
+        <Route path="/submit-thread" element={<ThreadSubmitPage/>}/>
         {/* Fallback to home page if no other route matches */}
         <Route path="*" element={<HomePage/>}/>
       </Routes>

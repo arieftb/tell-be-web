@@ -14,10 +14,29 @@ function Input ({
   error = false,
   maxLength = 255,
   inputMode,
+  multiline = false,
+  rows = 3,
 }) {
   const handleOnChange = (e) => {
     onChange(e.target.value);
   };
+
+  if (multiline) {
+    return (
+      <textarea
+        id={id}
+        name={name}
+        value={value}
+        onChange={handleOnChange}
+        placeholder={placeholder}
+        required={required}
+        className={`${styles.input} ${error ? styles.error : ''}`}
+        disabled={disabled}
+        maxLength={maxLength}
+        rows={rows}
+      />
+    );
+  }
 
   return (
     <input
@@ -48,6 +67,8 @@ Input.propTypes = {
   error: PropTypes.bool,
   maxLength: PropTypes.number,
   inputMode: PropTypes.string,
+  multiline: PropTypes.bool,
+  rows: PropTypes.number,
 };
 
 export default Input;

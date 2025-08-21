@@ -2,6 +2,9 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import GetAllThreadsUseCase from '../../../application/thread/GetAllThreadsUseCase.js';
 import GetThreadDetailUseCase from '../../../application/thread/GetThreadDetailUseCase.js';
 import SubmitCommentUseCase from '../../../application/thread/SubmitCommentUseCase.js';
+import { SubmitThreadUseCase } from '../../../application/thread/SubmitThreadUseCase.js';
+import { ThreadRepository } from '../../../data/persistence/thread/ThreadRepository.js';
+import { AuthRepository } from '../../../data/persistence/auth/AuthRepository.js';
 
 export const fetchThreads = createAsyncThunk(
   'threads/fetchThreads',
@@ -42,6 +45,21 @@ export const submitComment = createAsyncThunk(
   },
 );
 
+export const submitThread = createAsyncThunk(
+  'threads/submitThread',
+  async (threadData, { rejectWithValue }) => {
+    try {
+      const threadRepository = new ThreadRepository();
+      const authRepository = new AuthRepository();
+      const submitThreadUseCase = new SubmitThreadUseCase(threadRepository, authRepository);
+      return await submitThreadUseCase.execute(threadData);
+    } catch (error) {
+      const errorMessage = error.message || 'Failed to submit thread';
+      return rejectWithValue(errorMessage);
+    }
+  },
+);
+
 const threadSlice = createSlice({
   name: 'threads',
   initialState: {
@@ -53,8 +71,14 @@ const threadSlice = createSlice({
     detailThreadError: null,
     submitCommentStatus: 'idle',
     submitCommentError: null,
+    submitThreadStatus: 'idle',
+    submitThreadError: null,
   },
-  reducers: {},
+  reducers: {
+    resetSubmitThreadStatus: (state) => {
+      state.submitThreadStatus = 'idle';
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchThreads.pending, (state) => {
@@ -97,9 +121,23 @@ const threadSlice = createSlice({
       .addCase(submitComment.rejected, (state, action) => {
         state.submitCommentStatus = 'failed';
         state.submitCommentError = action.payload;
+      })
+      .addCase(submitThread.pending, (state) => {
+        state.submitThreadStatus = 'loading';
+      })
+      .addCase(submitThread.fulfilled, (state) => {
+        state.submitThreadStatus = 'succeeded';
+        state.submitThreadError = null;
+        state.status = 'idle';
+      })
+      .addCase(submitThread.rejected, (state, action) => {
+        state.submitThreadStatus = 'failed';
+        state.submitThreadError = action.payload;
       });
   },
 });
+
+export const { resetSubmitThreadStatus } = threadSlice.actions;
 
 export const selectAllThreads = (state) => state.threads.threads;
 export const selectThreadsStatus = (state) => state.threads.status;
@@ -113,5 +151,9 @@ export const selectSubmitCommentStatus = (state) =>
   state.threads.submitCommentStatus;
 export const selectSubmitCommentError = (state) =>
   state.threads.submitCommentError;
+export const selectSubmitThreadStatus = (state) =>
+  state.threads.submitThreadStatus;
+export const selectSubmitThreadError = (state) =>
+  state.threads.submitThreadError;
 
 export default threadSlice.reducer;
