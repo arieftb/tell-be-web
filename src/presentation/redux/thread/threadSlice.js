@@ -85,10 +85,15 @@ const threadSlice = createSlice({
     submitCommentError: null,
     submitThreadStatus: 'idle',
     submitThreadError: null,
+    selectedCategory: null,
+    categories: [],
   },
   reducers: {
     resetSubmitThreadStatus: (state) => {
       state.submitThreadStatus = 'idle';
+    },
+    setSelectedCategory: (state, action) => {
+      state.selectedCategory = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -100,6 +105,10 @@ const threadSlice = createSlice({
           state.status = 'succeeded';
           state.threads = action.payload;
           state.error = null;
+          const uniqueCategories = [...new Set(action.payload.map(
+              (thread) => thread.category,
+          ))];
+          state.categories = uniqueCategories;
         })
         .addCase(fetchThreads.rejected, (state, action) => {
           state.status = 'failed';
@@ -149,9 +158,16 @@ const threadSlice = createSlice({
   },
 });
 
-export const {resetSubmitThreadStatus} = threadSlice.actions;
+export const {resetSubmitThreadStatus, setSelectedCategory} =
+  threadSlice.actions;
 
-export const selectAllThreads = (state) => state.threads.threads;
+export const selectAllThreads = (state) => {
+  const {threads, selectedCategory} = state.threads;
+  if (selectedCategory) {
+    return threads.filter((thread) => thread.category === selectedCategory);
+  }
+  return threads;
+};
 export const selectThreadsStatus = (state) => state.threads.status;
 export const selectThreadsError = (state) => state.threads.error;
 export const selectDetailThread = (state) => state.threads.detailThread;
@@ -167,5 +183,7 @@ export const selectSubmitThreadStatus = (state) =>
   state.threads.submitThreadStatus;
 export const selectSubmitThreadError = (state) =>
   state.threads.submitThreadError;
+export const selectCategories = (state) => state.threads.categories;
+export const selectSelectedCategory = (state) => state.threads.selectedCategory;
 
 export default threadSlice.reducer;

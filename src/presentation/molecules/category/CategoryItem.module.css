@@ -1,0 +1,23 @@
+.categoryItem {
+  background-color: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.categoryItem:hover {
+  background-color: var(--gray-200);
+}
+
+.categoryItem.selected {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.categoryItem.selected:hover {
+  background-color: var(--primary-dark-color);
+}

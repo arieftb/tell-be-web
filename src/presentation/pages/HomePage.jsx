@@ -5,6 +5,9 @@ import {
   selectAllThreads,
   selectThreadsError,
   selectThreadsStatus,
+  selectCategories,
+  selectSelectedCategory,
+  setSelectedCategory,
 } from '../redux/thread/threadSlice.js';
 import HomeTemplate from '../templates/HomeTemplate.jsx';
 import {selectIsLoggedIn} from '../redux/auth/authSlice.js';
@@ -15,6 +18,12 @@ function HomePage() {
   const status = useSelector(selectThreadsStatus);
   const error = useSelector(selectThreadsError);
   const isLoggedIn = useSelector(selectIsLoggedIn);
+  const categories = useSelector(selectCategories);
+  const selectedCategory = useSelector(selectSelectedCategory);
+
+  const handleSelectCategory = (category) => {
+    dispatch(setSelectedCategory(category));
+  };
 
   useEffect(() => {
     if (status === 'idle') {
@@ -28,6 +37,9 @@ function HomePage() {
       status={status}
       error={error}
       isLoggedIn={isLoggedIn}
+      categories={categories}
+      selectedCategory={selectedCategory}
+      onSelectCategory={handleSelectCategory}
     />
   );
 }
