@@ -6,9 +6,7 @@ import {
 } from '../../../application/auth/RegisterUseCase.js';
 import RegAndLoginUseCase from
   '../../../application/auth/RegisterAndLoginUseCase.js';
-import {
-  LoginUseCase,
-} from '../../../application/auth/LoginUseCase.js';
+import LoginUseCase from '../../../application/auth/LoginUseCase.js';
 import {
   AuthRepository,
 } from '../../../data/persistence/auth/AuthRepository.js';
