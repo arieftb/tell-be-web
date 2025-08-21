@@ -1,0 +1,22 @@
+.card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.userName {
+  font-weight: bold;
+}
+
+.score {
+  font-weight: bold;
+  color: var(--primary);
+}
