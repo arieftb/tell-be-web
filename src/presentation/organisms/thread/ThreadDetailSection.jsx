@@ -4,7 +4,7 @@ import ThreadDetail from '../../molecules/thread/ThreadDetail.jsx';
 import LoadingBar from '../../atoms/loadingbar/LoadingBar.jsx';
 import styles from './ThreadDetailSection.module.css';
 
-function ThreadDetailSection ({ thread, status, error }) {
+function ThreadDetailSection({thread, status, error}) {
   if (status === 'loading') {
     return <LoadingBar/>;
   }

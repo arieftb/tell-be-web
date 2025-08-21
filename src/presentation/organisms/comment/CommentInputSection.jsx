@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import styles from './CommentInputSection.module.css';
 import IsLoggedInUseCase from '../../../application/auth/IsLoggedInUseCase.js';
 import CommentForm from '../../molecules/comment/CommentForm.jsx';

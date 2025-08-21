@@ -2,7 +2,7 @@ import User from '../../../domain/user/model/User.js';
 import Comment from './Comment.js';
 
 export default class DetailThread {
-  constructor ({
+  constructor({
     id, title, body, category, createdAt, owner,
     upVotesBy, downVotesBy, comments,
   }) {

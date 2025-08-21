@@ -1,11 +1,11 @@
 import GetAuthTokenUseCase from './GetAuthTokenUseCase.js';
 
 export default class IsLoggedInUseCase {
-  constructor () {
+  constructor() {
     this.getAuthTokenUseCase = new GetAuthTokenUseCase();
   }
 
-  execute () {
+  execute() {
     return !!this.getAuthTokenUseCase.execute();
   }
 }

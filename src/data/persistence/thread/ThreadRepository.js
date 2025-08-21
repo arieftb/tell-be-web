@@ -9,7 +9,7 @@ import DetailThread from '../../../domain/thread/model/DetailThread.js';
 import Comment from '../../../domain/thread/model/Comment.js';
 
 export class ThreadRepository {
-  async getAllThreads () {
+  async getAllThreads() {
     try {
       const threadsData = await getAllThreads();
       return threadsData.map((thread) => new Thread(thread));
@@ -20,7 +20,7 @@ export class ThreadRepository {
     }
   }
 
-  async getThreadDetail (threadId) {
+  async getThreadDetail(threadId) {
     try {
       const threadData = await getThreadDetail(threadId);
       return new DetailThread(threadData);
@@ -30,7 +30,7 @@ export class ThreadRepository {
     }
   }
 
-  async submitComment (commentPayload) {
+  async submitComment(commentPayload) {
     try {
       const commentData = await submitComment(commentPayload);
       return new Comment(commentData);
@@ -40,7 +40,7 @@ export class ThreadRepository {
     }
   }
 
-  async submitThread (threadPayload) {
+  async submitThread(threadPayload) {
     try {
       const threadData = await submitThread(threadPayload);
       return new Thread(threadData);

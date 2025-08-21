@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import styles from './Text.module.css';
 
-const Text = ({ children, variant, className }) => {
+const Text = ({children, variant, className}) => {
   const variants = {
     large: styles.large,
     small: styles.small,
@@ -25,36 +25,36 @@ Text.propTypes = {
   className: PropTypes.string,
 };
 
-const LargeText = ({ children }) => (
-  Text({ children, variant: 'large' })
+const LargeText = ({children}) => (
+  Text({children, variant: 'large'})
 );
 
 LargeText.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const ParagraphText = ({ children }) => (
-  Text({ children, variant: 'paragraph' })
+const ParagraphText = ({children}) => (
+  Text({children, variant: 'paragraph'})
 );
 
 ParagraphText.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const SmallText = ({ children, className }) => (
-  Text({ children, variant: 'small', className })
+const SmallText = ({children, className}) => (
+  Text({children, variant: 'small', className})
 );
 
 SmallText.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const XSmallText = ({ children }) => (
-  Text({ children, variant: 'x_small' })
+const XSmallText = ({children}) => (
+  Text({children, variant: 'x_small'})
 );
 
 XSmallText.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export { LargeText, ParagraphText, SmallText, XSmallText };
+export {LargeText, ParagraphText, SmallText, XSmallText};

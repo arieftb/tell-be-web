@@ -6,8 +6,8 @@ import CommentInputSection from '../organisms/comment/CommentInputSection.jsx';
 import CommentSection from '../organisms/comment/CommentSection.jsx';
 import styles from './ThreadDetailTemplate.module.css';
 
-function ThreadDetailTemplate (
-  { thread, status, error },
+function ThreadDetailTemplate(
+    {thread, status, error},
 ) {
   return (
     <div className={styles.threadDetailTemplate}>

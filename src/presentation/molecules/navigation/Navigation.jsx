@@ -1,15 +1,15 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
 import NavigationItem from './NavigationItem.jsx';
 import styles from './Navigation.module.css';
-import { logout, selectAuthToken, } from '../../redux/auth/authSlice.js';
+import {logout, selectAuthToken} from '../../redux/auth/authSlice.js';
 
-function Navigation () {
+function Navigation() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector(
-    selectAuthToken,
+      selectAuthToken,
   );
 
   const handleLogout = (e) => {

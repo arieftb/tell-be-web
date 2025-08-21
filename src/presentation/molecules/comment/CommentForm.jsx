@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import React, {useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useParams} from 'react-router-dom';
 import styles from './CommentForm.module.css';
 import Button from '../../atoms/button/Button.jsx';
-import { selectSubmitCommentStatus, submitComment, } from '../../redux/thread/threadSlice.js';
-import { H5 } from '../../atoms/text/Heading.jsx';
+import {
+  selectSubmitCommentStatus, submitComment,
+} from '../../redux/thread/threadSlice.js';
+import {H5} from '../../atoms/text/Heading.jsx';
 
 const CommentForm = () => {
   const [content, setContent] = useState('');
   const dispatch = useDispatch();
-  const { threadId } = useParams();
+  const {threadId} = useParams();
   const submitStatus = useSelector(selectSubmitCommentStatus);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (content.trim()) {
-      dispatch(submitComment({ threadId, content }));
+      dispatch(submitComment({threadId, content}));
       setContent('');
     }
   };

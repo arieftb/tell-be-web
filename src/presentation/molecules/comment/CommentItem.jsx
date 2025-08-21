@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SmallText } from '../../atoms/text/Text.jsx';
+import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import styles from './CommentItem.module.css';
 
-function CommentItem ({ comment }) {
-  const { content, createdAt, owner } = comment;
+function CommentItem({comment}) {
+  const {content, createdAt, owner} = comment;
 
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -24,7 +24,7 @@ function CommentItem ({ comment }) {
       </div>
       <div
         className={styles.commentContent}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{__html: content}}
       />
     </div>
   );

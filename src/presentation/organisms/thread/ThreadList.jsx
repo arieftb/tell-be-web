@@ -4,7 +4,7 @@ import ThreadItem from '../../molecules/thread/ThreadItem.jsx';
 import LoadingBar from '../../atoms/loadingbar/LoadingBar.jsx';
 import styles from './ThreadList.module.css';
 
-function ThreadList ({ threads, status, error }) {
+function ThreadList({threads, status, error}) {
   if (status === 'loading') {
     return <LoadingBar/>;
   }

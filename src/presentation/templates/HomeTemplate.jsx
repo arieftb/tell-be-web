@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import Header from '../organisms/header/Header.jsx';
 import ThreadList from '../organisms/thread/ThreadList.jsx';
 import styles from './HomeTemplate.module.css';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
-function HomeTemplate (
-  { threads, status, error, isLoggedIn },
+function HomeTemplate(
+    {threads, status, error, isLoggedIn},
 ) {
   return (
     <div className={styles.homeTemplate}>

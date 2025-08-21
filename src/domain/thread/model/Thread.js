@@ -1,5 +1,5 @@
 export default class Thread {
-  constructor ({
+  constructor({
     id, title, body, category, createdAt, ownerId,
     totalComments = 0, upVotesBy = [], downVotesBy = [],
   }) {

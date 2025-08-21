@@ -1,4 +1,4 @@
-import { login, register } from '../../infrastructure/auth/AuthRemoteSource.js';
+import {login, register} from '../../infrastructure/auth/AuthRemoteSource.js';
 import {
   AuthenticationError,
   DuplicateEmailError,
@@ -6,7 +6,7 @@ import {
 } from '../../../domain/auth/model/AuthExceptions.js';
 
 export class AuthRepository {
-  async registerUser (registerPayload) {
+  async registerUser(registerPayload) {
     try {
       return await register({
         name: registerPayload.name.getValue(),
@@ -15,20 +15,20 @@ export class AuthRepository {
       });
     } catch (error) {
       if (error.response) {
-        const { status, message } = error.response.data;
+        const {status, message} = error.response.data;
         if (status === 'fail' && message === 'Email is already taken') {
           throw new DuplicateEmailError('This email is already in use.');
         }
         throw new RegistrationError('Failed to register. Please try again.');
       }
       throw new RegistrationError(
-        'Network error. Please check your connection.');
+          'Network error. Please check your connection.');
     }
   }
 
-  async loginUser (loginPayload) {
+  async loginUser(loginPayload) {
     try {
-      const { token } = await login({
+      const {token} = await login({
         email: loginPayload.email.getValue(),
         password: loginPayload.password.getValue(),
       });
@@ -36,26 +36,26 @@ export class AuthRepository {
       return token;
     } catch (error) {
       if (error.response) {
-        const { status, message } = error.response.data;
+        const {status, message} = error.response.data;
         if (status === 'fail' && message === 'Invalid email or password') {
           throw new AuthenticationError('Invalid email or password.');
         }
         throw new AuthenticationError('Failed to login. Please try again.');
       }
       throw new AuthenticationError(
-        'Network error. Please check your connection.');
+          'Network error. Please check your connection.');
     }
   }
 
-  saveToken (token) {
+  saveToken(token) {
     localStorage.setItem('accessToken', token);
   }
 
-  getToken () {
+  getToken() {
     return localStorage.getItem('accessToken');
   }
 
-  removeToken () {
+  removeToken() {
     localStorage.removeItem('accessToken');
   }
 }

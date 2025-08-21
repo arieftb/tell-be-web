@@ -1,5 +1,5 @@
 export class Name {
-  constructor (value) {
+  constructor(value) {
     if (!value) {
       throw new Error('Name is required');
     }
@@ -17,7 +17,7 @@ export class Name {
     this._name = trimmed;
   }
 
-  getValue () {
+  getValue() {
     return this._name;
   }
 }

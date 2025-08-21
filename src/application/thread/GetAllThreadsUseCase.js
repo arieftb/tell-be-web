@@ -1,13 +1,15 @@
-import { ThreadRepository, } from '../../data/persistence/thread/ThreadRepository.js';
+import {
+  ThreadRepository,
+} from '../../data/persistence/thread/ThreadRepository.js';
 import GetAllUsersUseCase from '../user/GetAllUsersUseCase.js';
 
 export default class GetAllThreadsUseCase {
-  constructor () {
+  constructor() {
     this.threadRepository = new ThreadRepository();
     this.getAllUsersUseCase = new GetAllUsersUseCase();
   }
 
-  async execute () {
+  async execute() {
     const threads = await this.threadRepository.getAllThreads();
     const users = await this.getAllUsersUseCase.execute();
 

@@ -1,6 +1,6 @@
 import InputField from './InputField.jsx';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState } from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 const BodyInputField = ({
   id,

@@ -1,7 +1,7 @@
 import User from '../../../domain/user/model/User.js';
 
 export default class Comment {
-  constructor ({ id, content, createdAt, owner, upVotesBy, downVotesBy }) {
+  constructor({id, content, createdAt, owner, upVotesBy, downVotesBy}) {
     if (!id || !content || !createdAt || !owner || !upVotesBy || !downVotesBy) {
       throw new Error('COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
     }

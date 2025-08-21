@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { H5 } from '../../atoms/text/Heading.jsx';
-import { SmallText } from '../../atoms/text/Text.jsx';
+import {Link} from 'react-router-dom';
+import {H5} from '../../atoms/text/Heading.jsx';
+import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import styles from './ThreadItem.module.css';
 
-function ThreadItem ({ thread }) {
+function ThreadItem({thread}) {
   const {
     id, title, body, category, createdAt, ownerName,
     ownerAvatar, totalComments,
@@ -24,7 +24,7 @@ function ThreadItem ({ thread }) {
       <div className={styles.threadItem}>
         <div className={styles.category}>#{category}</div>
         <H5 className={styles.title}>{title}</H5>
-        <div className={styles.body} dangerouslySetInnerHTML={{ __html: body }}/>
+        <div className={styles.body} dangerouslySetInnerHTML={{__html: body}}/>
         <div className={styles.meta}>
           <div className={styles.ownerInfo}>
             <Avatar src={ownerAvatar} alt={ownerName} size="small"/>

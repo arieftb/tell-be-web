@@ -1,13 +1,13 @@
-import { H4 } from '../../atoms/text/Heading.jsx';
+import {H4} from '../../atoms/text/Heading.jsx';
 import styles from './SignUpForm.module.css';
 import TextInputField from '../../molecules/input/TextInputField.jsx';
 import EmailInputField from '../../molecules/input/EmailInputField.jsx';
 import PasswordInputField from '../../molecules/input/PasswordInputField.jsx';
 import Button from '../../atoms/button/Button.jsx';
-import { useState } from 'react';
-import { SmallText } from '../../atoms/text/Text.jsx';
+import {useState} from 'react';
+import {SmallText} from '../../atoms/text/Text.jsx';
 
-const SignUpForm = ({ onSubmit, isSubmitting, successMessage, errorMessage }) => {
+const SignUpForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -36,7 +36,7 @@ const SignUpForm = ({ onSubmit, isSubmitting, successMessage, errorMessage }) =>
 
   const validateForm = () => {
     let valid = true;
-    const newErrors = { ...formErrors };
+    const newErrors = {...formErrors};
 
     // Validate name
     if (!formData.name.trim()) {

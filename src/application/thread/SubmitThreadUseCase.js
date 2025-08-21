@@ -1,12 +1,12 @@
-import { ThreadPayload } from '../../domain/thread/model/ThreadPayload.js';
+import {ThreadPayload} from '../../domain/thread/model/ThreadPayload.js';
 
 export class SubmitThreadUseCase {
-  constructor (threadRepository, authRepository) {
+  constructor(threadRepository, authRepository) {
     this.threadRepository = threadRepository;
     this.authRepository = authRepository;
   }
 
-  async execute (payload) {
+  async execute(payload) {
     const threadPayload = new ThreadPayload(payload);
     const token = this.authRepository.getToken();
     if (!token) {

@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import {configureStore} from '@reduxjs/toolkit';
 import authReducer from '../presentation/redux/auth/authSlice.js';
 import threadReducer from '../presentation/redux/thread/threadSlice.js';
 

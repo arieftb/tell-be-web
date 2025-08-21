@@ -3,8 +3,8 @@ import styles from './RegisterTemplate.module.css';
 import SignUpForm from '../organisms/form/SignUpForm.jsx';
 import PropTypes from 'prop-types';
 
-export default function RegisterTemplate (
-  { handleSubmit, status, error },
+export default function RegisterTemplate(
+    {handleSubmit, status, error},
 ) {
   return (
     <section className={styles['register-template']}>

@@ -1,12 +1,12 @@
-import { H4 } from '../../atoms/text/Heading.jsx';
+import {H4} from '../../atoms/text/Heading.jsx';
 import styles from './LoginForm.module.css';
 import EmailInputField from '../../molecules/input/EmailInputField.jsx';
 import PasswordInputField from '../../molecules/input/PasswordInputField.jsx';
 import Button from '../../atoms/button/Button.jsx';
-import { useState } from 'react';
-import { SmallText } from '../../atoms/text/Text.jsx';
+import {useState} from 'react';
+import {SmallText} from '../../atoms/text/Text.jsx';
 
-const LoginForm = ({ onSubmit, isSubmitting, successMessage, errorMessage }) => {
+const LoginForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -33,7 +33,7 @@ const LoginForm = ({ onSubmit, isSubmitting, successMessage, errorMessage }) => 
 
   const validateForm = () => {
     let valid = true;
-    const newErrors = { ...formErrors };
+    const newErrors = {...formErrors};
 
     // Validate email
     if (!formData.email.trim()) {

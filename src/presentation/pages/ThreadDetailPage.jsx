@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useParams} from 'react-router-dom';
 import {
   fetchThreadDetail,
   selectDetailThread,
@@ -9,8 +9,8 @@ import {
 } from '../redux/thread/threadSlice.js';
 import ThreadDetailTemplate from '../templates/ThreadDetailTemplate.jsx';
 
-function ThreadDetailPage () {
-  const { threadId } = useParams();
+function ThreadDetailPage() {
+  const {threadId} = useParams();
   const dispatch = useDispatch();
   const thread = useSelector(selectDetailThread);
   const status = useSelector(selectDetailThreadStatus);

@@ -1,5 +1,5 @@
 class User {
-  constructor ({ id, name, email, avatar }) {
+  constructor({id, name, email, avatar}) {
     if (!id || typeof id !== 'string' || id.length === 0) {
       throw new Error('USER.MISSING_REQUIRED_PROPERTIES');
     }

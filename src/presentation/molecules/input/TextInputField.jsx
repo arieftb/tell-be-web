@@ -1,6 +1,6 @@
 import InputField from './InputField.jsx';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState } from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 const TextInputField = ({
   id,
@@ -37,14 +37,14 @@ const TextInputField = ({
     if (valueToValidate.length > 0 && valueToValidate.length < minLength) {
       setLocalError(true);
       setLocalErrorMessage(
-        `${label} must be at least ${minLength} characters`);
+          `${label} must be at least ${minLength} characters`);
       return false;
     }
 
     if (valueToValidate.length > maxLength) {
       setLocalError(true);
       setLocalErrorMessage(
-        `${label} must be less than ${maxLength} characters`);
+          `${label} must be less than ${maxLength} characters`);
       return false;
     }
 

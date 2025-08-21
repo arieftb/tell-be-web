@@ -1,11 +1,11 @@
-import { UserRepository } from '../../data/persistence/user/UserRepository.js';
+import {UserRepository} from '../../data/persistence/user/UserRepository.js';
 
 export default class GetAllUsersUseCase {
-  constructor () {
+  constructor() {
     this.userRepository = new UserRepository();
   }
 
-  async execute () {
+  async execute() {
     return await this.userRepository.getAllUsers();
   }
 }

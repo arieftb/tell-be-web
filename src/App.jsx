@@ -1,14 +1,14 @@
 import './App.css';
 import './style/theme.css';
 import './style/responsive.css';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import RegisterPage from './presentation/pages/RegisterPage.jsx';
 import LoginPage from './presentation/pages/LoginPage.jsx';
 import HomePage from './presentation/pages/HomePage.jsx';
 import ThreadDetailPage from './presentation/pages/ThreadDetailPage.jsx';
 import ThreadSubmitPage from './presentation/pages/ThreadSubmitPage.jsx';
 
-function App () {
+function App() {
   return (
     <BrowserRouter>
       <Routes>

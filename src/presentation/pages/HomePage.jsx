@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   fetchThreads,
   selectAllThreads,
@@ -7,9 +7,9 @@ import {
   selectThreadsStatus,
 } from '../redux/thread/threadSlice.js';
 import HomeTemplate from '../templates/HomeTemplate.jsx';
-import { selectIsLoggedIn } from '../redux/auth/authSlice.js';
+import {selectIsLoggedIn} from '../redux/auth/authSlice.js';
 
-function HomePage () {
+function HomePage() {
   const dispatch = useDispatch();
   const threads = useSelector(selectAllThreads);
   const status = useSelector(selectThreadsStatus);
@@ -23,7 +23,12 @@ function HomePage () {
   }, [status, dispatch]);
 
   return (
-    <HomeTemplate threads={threads} status={status} error={error} isLoggedIn={isLoggedIn}/>
+    <HomeTemplate
+      threads={threads}
+      status={status}
+      error={error}
+      isLoggedIn={isLoggedIn}
+    />
   );
 }
 

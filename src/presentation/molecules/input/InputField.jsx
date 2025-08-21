@@ -1,4 +1,4 @@
-import { SmallText } from '../../atoms/text/Text.jsx';
+import {SmallText} from '../../atoms/text/Text.jsx';
 import PropTypes from 'prop-types';
 import Input from '../../atoms/input/Input.jsx';
 import styles from './InputField.module.css';

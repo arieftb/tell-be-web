@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Input.module.css';
 
-function Input ({
+function Input({
   id,
   type = 'text',
   name,

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Avatar.module.css';
 
-function Avatar ({ src, alt, size = 'medium' }) {
+function Avatar({src, alt, size = 'medium'}) {
   return (
     <img
       src={src}

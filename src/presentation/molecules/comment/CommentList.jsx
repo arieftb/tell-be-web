@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import CommentItem from './CommentItem.jsx';
 import styles from './CommentList.module.css';
 
-function CommentList ({ comments }) {
+function CommentList({comments}) {
   if (!comments || comments.length === 0) {
     return <div className={styles.noComments}>No comments yet.</div>;
   }

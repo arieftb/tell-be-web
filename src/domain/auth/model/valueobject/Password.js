@@ -1,5 +1,5 @@
 export class Password {
-  constructor (value) {
+  constructor(value) {
     if (!value) {
       throw new Error('Password is required');
     }
@@ -11,7 +11,7 @@ export class Password {
     this._value = value;
   }
 
-  getValue () {
+  getValue() {
     return this._value;
   }
 }

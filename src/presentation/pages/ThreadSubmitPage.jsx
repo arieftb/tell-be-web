@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
 import ThreadSubmitTemplate from '../templates/ThreadSubmitTemplate';
-import { resetSubmitThreadStatus, selectSubmitThreadStatus, submitThread } from '../redux/thread/threadSlice';
+import {
+  resetSubmitThreadStatus, selectSubmitThreadStatus, submitThread,
+} from '../redux/thread/threadSlice';
 
-import { selectIsLoggedIn } from '../redux/auth/authSlice';
+import {selectIsLoggedIn} from '../redux/auth/authSlice';
 
 const ThreadSubmitPage = () => {
   const dispatch = useDispatch();
