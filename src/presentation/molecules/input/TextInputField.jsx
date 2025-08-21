@@ -1,6 +1,6 @@
 import InputField from './InputField.jsx';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState } from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 const TextInputField = ({
   id,
@@ -22,7 +22,8 @@ const TextInputField = ({
   const [localValue, setLocalValue] = useState(value);
 
   const error = propError !== undefined ? propError : localError;
-  const errorMessage = propErrorMessage !== undefined ? propErrorMessage : localErrorMessage;
+  const errorMessage = propErrorMessage !== undefined ?
+    propErrorMessage : localErrorMessage;
 
   const validateInput = useCallback((inputValue) => {
     const valueToValidate = inputValue || '';
@@ -35,17 +36,23 @@ const TextInputField = ({
 
     if (valueToValidate.length > 0 && valueToValidate.length < minLength) {
       setLocalError(true);
-      setLocalErrorMessage(`${label} must be at least ${minLength} characters`);
+      setLocalErrorMessage(
+          `${label} must be at least ${minLength} characters`);
       return false;
     }
 
     if (valueToValidate.length > maxLength) {
       setLocalError(true);
-      setLocalErrorMessage(`${label} must be less than ${maxLength} characters`);
+      setLocalErrorMessage(
+          `${label} must be less than ${maxLength} characters`);
       return false;
     }
 
-    if (valueToValidate.length > 0 && validationRegex && !validationRegex.test(valueToValidate)) {
+    if (
+      valueToValidate.length > 0 &&
+      validationRegex &&
+      !validationRegex.test(valueToValidate)
+    ) {
       setLocalError(true);
       setLocalErrorMessage(`Invalid ${label.toLowerCase()} format`);
       return false;

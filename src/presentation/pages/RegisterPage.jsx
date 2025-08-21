@@ -1,9 +1,11 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { registerAndLoginUser, selectAuthError, selectAuthStatus } from '../redux/auth/authSlice.js';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  registerAndLoginUser, selectAuthError, selectAuthStatus,
+} from '../redux/auth/authSlice.js';
 import RegisterTemplate from './RegisterTemplate.jsx';
 
-export default function RegisterPage () {
+export default function RegisterPage() {
   const dispatch = useDispatch();
   const status = useSelector(selectAuthStatus);
   const error = useSelector(selectAuthError);
@@ -13,6 +15,10 @@ export default function RegisterPage () {
   };
 
   return (
-    <RegisterTemplate handleSubmit={handleSubmit} status={status} error={error}/>
+    <RegisterTemplate
+      handleSubmit={handleSubmit}
+      status={status}
+      error={error}
+    />
   );
 }

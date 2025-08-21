@@ -1,0 +1,26 @@
+.commentItem {
+    border: 1px solid var(--gray-200);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--white);
+}
+
+.commentHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.ownerInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.commentContent {
+    color: var(--gray-700);
+    line-height: 1.5;
+    text-align: left;
+}

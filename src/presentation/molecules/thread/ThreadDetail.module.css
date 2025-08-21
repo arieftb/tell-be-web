@@ -1,0 +1,47 @@
+.threadDetail {
+    padding-top: 1rem;
+    background-color: var(--white);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.threadDetail .category {
+    font-size: 0.9rem;
+    color: var(--blue-600);
+    background-color: var(--blue-50);
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.25rem;
+    display: inline-block;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+.threadDetail .title {
+    margin-bottom: 1rem;
+    color: var(--gray-900);
+    text-align: left;
+}
+
+.threadDetail .body {
+    color: var(--gray-700);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.threadDetail .meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--gray-500);
+    border-top: 1px solid var(--gray-100);
+    padding-top: 1rem;
+}
+
+.threadDetail .meta .ownerInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}

@@ -1,5 +1,5 @@
 export class Email {
-  constructor (value) {
+  constructor(value) {
     if (!value) {
       throw new Error('Email is required');
     }
@@ -21,7 +21,7 @@ export class Email {
     this._value = value;
   }
 
-  getValue () {
+  getValue() {
     return this._value;
   }
 }

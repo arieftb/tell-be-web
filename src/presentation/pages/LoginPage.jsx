@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { loginUser, selectAuthError, selectAuthStatus, selectAuthToken } from '../redux/auth/authSlice.js';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-dom';
+import {
+  loginUser, selectAuthError, selectAuthStatus, selectAuthToken,
+} from '../redux/auth/authSlice.js';
 import LoginTemplate from './LoginTemplate.jsx';
 
-export default function LoginPage () {
+export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const status = useSelector(selectAuthStatus);
