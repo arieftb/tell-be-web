@@ -4,12 +4,13 @@ import {Link} from 'react-router-dom';
 import {H5} from '../../atoms/text/Heading.jsx';
 import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
+import VoteCount from '../vote/VoteCount.jsx';
 import styles from './ThreadItem.module.css';
 
 function ThreadItem({thread}) {
   const {
     id, title, body, category, createdAt, ownerName,
-    ownerAvatar, totalComments,
+    ownerAvatar, totalComments, upVotesBy, downVotesBy,
   } = thread;
 
   // Basic date formatting
@@ -32,6 +33,10 @@ function ThreadItem({thread}) {
           </div>
           <SmallText>On: {formattedDate}</SmallText>
           <SmallText>Comments: {totalComments}</SmallText>
+          <VoteCount
+            upVotes={upVotesBy.length}
+            downVotes={downVotesBy.length}
+          />
         </div>
       </div>
     </Link>
@@ -49,6 +54,8 @@ ThreadItem.propTypes = {
     totalComments: PropTypes.number.isRequired,
     ownerName: PropTypes.string.isRequired,
     ownerAvatar: PropTypes.string.isRequired,
+    upVotesBy: PropTypes.arrayOf(PropTypes.string).isRequired,
+    downVotesBy: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
 };
 

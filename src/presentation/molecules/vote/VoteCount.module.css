@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.voteItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
