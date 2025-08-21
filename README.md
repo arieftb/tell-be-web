@@ -18,21 +18,25 @@ and scalable codebase. The application includes user authentication, thread and 
 - View all threads
 - View thread detail
 - Submit a comment
+- Submit new thread
 
 ## Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/arieftb/tell-be-web.git
    cd tell-be-web
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -43,7 +47,7 @@ and scalable codebase. The application includes user authentication, thread and 
 
 The project follows a clean architecture approach with the following structure:
 
-```
+```markdown
 src/
 ├── application/
 │   ├── auth/
@@ -84,6 +88,7 @@ src/
 - **Vite** - Build tool and development server
 - **PropTypes** - Runtime type checking for React props
 - **ESLint** - For code linting and maintaining code quality
+- **Zod** - For schema validation
 - **Clean Architecture** - For separation of concerns and maintainability
 - **Atomic Design** - For organizing UI components
 

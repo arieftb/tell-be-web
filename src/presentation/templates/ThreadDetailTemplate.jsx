@@ -14,7 +14,7 @@ function ThreadDetailTemplate(
       <Header/>
       <main className={styles.mainContent}>
         <ThreadDetailSection thread={thread} status={status} error={error}/>
-        <CommentInputSection/>
+        {status === 'succeeded' && <CommentInputSection/>}
         {thread && thread.comments && (
           <CommentSection comments={thread.comments}/>
         )}
