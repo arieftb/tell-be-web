@@ -56,7 +56,21 @@ async function downVoteThread(threadId) {
   return data.data.vote;
 }
 
+async function neutralVoteThread(threadId) {
+  const token = localStorage.getItem('accessToken');
+  const {data} = await AxiosClient.post(
+      `/threads/${threadId}/neutral-vote`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+  );
+  return data.data.vote;
+}
+
 export {
-  getAllThreads, getThreadDetail, submitComment, submitThread, upVoteThread,
-  downVoteThread,
+  getAllThreads, getThreadDetail, submitComment, submitThread,
+  upVoteThread, downVoteThread, neutralVoteThread,
 };

@@ -5,6 +5,7 @@ import {
   submitComment,
   submitThread,
   upVoteThread,
+  neutralVoteThread,
 } from '../../infrastructure/thread/ThreadRemoteSource.js';
 import Thread from '../../../domain/thread/model/Thread.js';
 import DetailThread from '../../../domain/thread/model/DetailThread.js';
@@ -69,6 +70,16 @@ export class ThreadRepository {
       return new Vote(voteData);
     } catch (error) {
       console.error('Error down voting thread:', error);
+      throw error;
+    }
+  }
+
+  async neutralVoteThread(threadId) {
+    try {
+      const voteData = await neutralVoteThread(threadId);
+      return new Vote(voteData);
+    } catch (error) {
+      console.error('Error neutral voting thread:', error);
       throw error;
     }
   }

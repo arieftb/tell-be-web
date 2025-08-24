@@ -22,6 +22,8 @@ import {
 import {
   DownVoteUC,
 } from '../../../application/thread/DownVoteUC';
+import {NeutralVoteThreadUseCase} from
+  '../../../application/thread/NeutralVoteThreadUseCase.js';
 
 export const fetchThreads = createAsyncThunk(
     'threads/fetchThreads',
@@ -80,9 +82,16 @@ export const submitThread = createAsyncThunk(
 
 export const upVoteThread = createAsyncThunk(
     'threads/upVoteThread',
-    async (threadId, {rejectWithValue}) => {
+    async (threadId, {rejectWithValue, getState}) => {
       try {
         const upVoteThreadUseCase = new UpVoteThreadUseCase();
+        const {threads} = getState().threads;
+        const thread = threads.find((t) => t.id === threadId);
+        if (thread && thread.isUpVotedByCurrentUser) {
+          const neutralVoteThreadUseCase = new NeutralVoteThreadUseCase();
+          const vote = await neutralVoteThreadUseCase.execute(threadId);
+          return {vote};
+        }
         const vote = await upVoteThreadUseCase.execute(threadId);
         return {vote};
       } catch (error) {
@@ -94,13 +103,34 @@ export const upVoteThread = createAsyncThunk(
 
 export const downVoteThread = createAsyncThunk(
     'threads/downVoteThread',
-    async (threadId, {rejectWithValue}) => {
+    async (threadId, {rejectWithValue, getState}) => {
       try {
         const downVoteThreadUseCase = new DownVoteUC();
+        const {threads} = getState().threads;
+        const thread = threads.find((t) => t.id === threadId);
+        if (thread && thread.isDownVotedByCurrentUser) {
+          const neutralVoteThreadUseCase = new NeutralVoteThreadUseCase();
+          const vote = await neutralVoteThreadUseCase.execute(threadId);
+          return {vote};
+        }
         const vote = await downVoteThreadUseCase.execute(threadId);
         return {vote};
       } catch (error) {
         const errorMessage = error.message || 'Failed to down-vote thread';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const neutralVoteThread = createAsyncThunk(
+    'threads/neutralVoteThread',
+    async (threadId, {rejectWithValue}) => {
+      try {
+        const neutralVoteThreadUseCase = new NeutralVoteThreadUseCase();
+        const vote = await neutralVoteThreadUseCase.execute(threadId);
+        return {vote};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to neutral-vote thread';
         return rejectWithValue(errorMessage);
       }
     },
@@ -125,6 +155,8 @@ const threadSlice = createSlice({
     upVoteError: null,
     downVoteStatus: 'idle',
     downVoteError: null,
+    neutralVoteStatus: 'idle',
+    neutralVoteError: null,
   },
   reducers: {
     resetSubmitThreadStatus: (state) => {
@@ -214,8 +246,12 @@ const threadSlice = createSlice({
                 ...thread,
                 upVotesBy: newUpVotesBy,
                 downVotesBy: newDownVotesBy,
-                isUpVotedByCurrentUser: newUpVotesBy.includes(userId),
-                isDownVotedByCurrentUser: newDownVotesBy.includes(userId),
+                isUpVotedByCurrentUser: newUpVotesBy.includes(
+                    userId,
+                ),
+                isDownVotedByCurrentUser: newDownVotesBy.includes(
+                    userId,
+                ),
               };
             }
             return thread;
@@ -233,8 +269,12 @@ const threadSlice = createSlice({
               ...state.detailThread,
               upVotesBy: newUpVotesBy,
               downVotesBy: newDownVotesBy,
-              isUpVotedByCurrentUser: newUpVotesBy.includes(userId),
-              isDownVotedByCurrentUser: newDownVotesBy.includes(userId),
+              isUpVotedByCurrentUser: newUpVotesBy.includes(
+                  userId,
+              ),
+              isDownVotedByCurrentUser: newDownVotesBy.includes(
+                  userId,
+              ),
             };
           }
         })
@@ -263,8 +303,12 @@ const threadSlice = createSlice({
                 ...thread,
                 upVotesBy: newUpVotesBy,
                 downVotesBy: newDownVotesBy,
-                isUpVotedByCurrentUser: newUpVotesBy.includes(userId),
-                isDownVotedByCurrentUser: newDownVotesBy.includes(userId),
+                isUpVotedByCurrentUser: newUpVotesBy.includes(
+                    userId,
+                ),
+                isDownVotedByCurrentUser: newDownVotesBy.includes(
+                    userId,
+                ),
               };
             }
             return thread;
@@ -283,14 +327,67 @@ const threadSlice = createSlice({
               ...state.detailThread,
               upVotesBy: newUpVotesBy,
               downVotesBy: newDownVotesBy,
-              isUpVotedByCurrentUser: newUpVotesBy.includes(userId),
-              isDownVotedByCurrentUser: newDownVotesBy.includes(userId),
+              isUpVotedByCurrentUser: newUpVotesBy.includes(
+                  userId,
+              ),
+              isDownVotedByCurrentUser: newDownVotesBy.includes(
+                  userId,
+              ),
             };
           }
         })
         .addCase(downVoteThread.rejected, (state, action) => {
           state.downVoteStatus = 'failed';
           state.downVoteError = action.payload;
+        })
+        .addCase(neutralVoteThread.pending, (state) => {
+          state.neutralVoteStatus = 'loading';
+        })
+        .addCase(neutralVoteThread.fulfilled, (state, action) => {
+          state.neutralVoteStatus = 'succeeded';
+          const {vote} = action.payload;
+          const {userId, threadId} = vote;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              const newUpVotesBy = thread.upVotesBy.filter((id) => id !== userId);
+              const newDownVotesBy = thread.downVotesBy.filter((id) => id !== userId);
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: newUpVotesBy.includes(
+                    userId,
+                ),
+                isDownVotedByCurrentUser: newDownVotesBy.includes(
+                    userId,
+                ),
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newUpVotesBy = state.detailThread.upVotesBy.filter((id) => id !== userId);
+            const newDownVotesBy = state.detailThread.downVotesBy.filter((id) => id !== userId);
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: newUpVotesBy.includes(
+                  userId,
+              ),
+              isDownVotedByCurrentUser: newDownVotesBy.includes(
+                  userId,
+              ),
+            };
+          }
+        })
+        .addCase(neutralVoteThread.rejected, (state, action) => {
+          state.neutralVoteStatus = 'failed';
+          state.neutralVoteError = action.payload;
         });
   },
 });
@@ -328,6 +425,9 @@ export const selectDownVote = (state) =>
   state.threads
       .downVoteStatus;
 export const selectDownVoteError = (state) => state.threads.downVoteError;
+export const selectNeutralVoteStatus = (state) =>
+  state.threads.neutralVoteStatus;
+export const selectNeutralVoteError = (state) => state.threads.neutralVoteError;
 
 
 export default threadSlice.reducer;
