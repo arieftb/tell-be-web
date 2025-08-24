@@ -144,7 +144,7 @@ export const neutralVoteThread = createAsyncThunk(
 
 export const upVoteComment = createAsyncThunk(
     'threads/upVoteComment',
-    async ({threadId, commentId}, {rejectWithValue}) => {
+    async ({threadId, commentId}, {rejectWithValue, getState}) => {
       try {
         const upVoteCommentUseCase = new UpVoteCommentUseCase();
         const result = await upVoteCommentUseCase.execute(threadId, commentId);
@@ -158,7 +158,8 @@ export const upVoteComment = createAsyncThunk(
           threadId: result.threadId,
           voteType: result.voteType,
         };
-        return {vote: serializableVote, commentId, threadId};
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote: serializableVote, commentId, threadId, currentUserId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to up-vote comment';
         return rejectWithValue(errorMessage);
@@ -168,7 +169,7 @@ export const upVoteComment = createAsyncThunk(
 
 export const downVoteComment = createAsyncThunk(
     'threads/downVoteComment',
-    async ({threadId, commentId}, {rejectWithValue}) => {
+    async ({threadId, commentId}, {rejectWithValue, getState}) => {
       try {
         const downVoteCommentUseCase = new DownVoteCommentUseCase();
         const result = await downVoteCommentUseCase.execute(threadId, commentId);
@@ -182,7 +183,8 @@ export const downVoteComment = createAsyncThunk(
           threadId: result.threadId,
           voteType: result.voteType,
         };
-        return {vote: serializableVote, commentId, threadId};
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote: serializableVote, commentId, threadId, currentUserId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to down-vote comment';
         return rejectWithValue(errorMessage);
@@ -192,7 +194,7 @@ export const downVoteComment = createAsyncThunk(
 
 export const neutralVoteComment = createAsyncThunk(
     'threads/neutralVoteComment',
-    async ({threadId, commentId}, {rejectWithValue}) => {
+    async ({threadId, commentId}, {rejectWithValue, getState}) => {
       try {
         const neutralVoteCommentUseCase = new NeutralVoteCommentUseCase();
         const result = await neutralVoteCommentUseCase.execute(threadId, commentId);
@@ -206,7 +208,8 @@ export const neutralVoteComment = createAsyncThunk(
           threadId: result.threadId,
           voteType: result.voteType,
         };
-        return {vote: serializableVote, commentId, threadId};
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote: serializableVote, commentId, threadId, currentUserId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to neutral-vote comment';
         return rejectWithValue(errorMessage);
@@ -467,25 +470,23 @@ const threadSlice = createSlice({
           state.neutralVoteStatus = 'failed';
           state.neutralVoteError = action.payload;
         })
-        .addCase(upVoteComment.fulfilled, (state, action) => {
-          const {vote, commentId, threadId} = action.payload;
-          const {userId} = vote;
-
+        .addCase(upVoteComment.pending, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
           if (state.detailThread && state.detailThread.id === threadId) {
             state.detailThread = {
               ...state.detailThread,
               comments: state.detailThread.comments.map((comment) => {
                 if (comment.id === commentId) {
-                  const newUpVotesBy = comment.upVotesBy.includes(userId) ?
-                    comment.upVotesBy.filter((id) => id !== userId) :
-                    [...comment.upVotesBy, userId];
-                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== userId);
+                  const newUpVotesBy = comment.upVotesBy.includes(currentUserId) ?
+                    comment.upVotesBy.filter((id) => id !== currentUserId) :
+                    [...comment.upVotesBy, currentUserId];
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
                   return {
                     ...comment,
                     upVotesBy: newUpVotesBy,
                     downVotesBy: newDownVotesBy,
-                    isUpVotedByCurrentUser: vote.voteType === 1,
-                    isDownVotedByCurrentUser: vote.voteType === -1,
+                    isUpVotedByCurrentUser: true,
+                    isDownVotedByCurrentUser: false,
                   };
                 }
                 return comment;
@@ -493,25 +494,133 @@ const threadSlice = createSlice({
             };
           }
         })
-        .addCase(downVoteComment.fulfilled, (state, action) => {
-          const {vote, commentId, threadId} = action.payload;
-          const {userId} = vote;
-
+        .addCase(upVoteComment.rejected, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
           if (state.detailThread && state.detailThread.id === threadId) {
             state.detailThread = {
               ...state.detailThread,
               comments: state.detailThread.comments.map((comment) => {
                 if (comment.id === commentId) {
-                  const newDownVotesBy = comment.downVotesBy.includes(userId) ?
-                    comment.downVotesBy.filter((id) => id !== userId) :
-                    [...comment.downVotesBy, userId];
-                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== userId);
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
                   return {
                     ...comment,
                     upVotesBy: newUpVotesBy,
                     downVotesBy: newDownVotesBy,
-                    isUpVotedByCurrentUser: vote.voteType === 1,
-                    isDownVotedByCurrentUser: vote.voteType === -1,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: false,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(upVoteComment.fulfilled, () => {
+          // The optimistic update in pending case already handled the state change.
+          // This fulfilled case can be used for any final consistency checks if needed.
+          // No explicit state modification needed here unless backend response dictates a different state.
+        })
+        .addCase(downVoteComment.pending, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newDownVotesBy = comment.downVotesBy.includes(currentUserId) ?
+                    comment.downVotesBy.filter((id) => id !== currentUserId) :
+                    [...comment.downVotesBy, currentUserId];
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: true,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(downVoteComment.rejected, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: false,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(downVoteComment.fulfilled, () => {
+          // The optimistic update in pending case already handled the state change.
+          // This fulfilled case can be used for any final consistency checks if needed.
+          // No explicit state modification needed here unless backend response dictates a different state.
+        })
+        .addCase(neutralVoteComment.pending, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: false,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(neutralVoteComment.rejected, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  // Revert to previous state based on currentUserId
+                  // This is a simplified revert, assuming the user was either upvoted or downvoted before
+                  const originalUpVoted = comment.upVotesBy.includes(currentUserId);
+                  const originalDownVoted = comment.downVotesBy.includes(currentUserId);
+
+                  let newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  let newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
+
+                  if (originalUpVoted) {
+                    newUpVotesBy = [...newUpVotesBy, currentUserId];
+                  } else if (originalDownVoted) {
+                    newDownVotesBy = [...newDownVotesBy, currentUserId];
+                  }
+
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: originalUpVoted,
+                    isDownVotedByCurrentUser: originalDownVoted,
                   };
                 }
                 return comment;
