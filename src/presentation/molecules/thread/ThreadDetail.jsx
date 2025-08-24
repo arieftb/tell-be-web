@@ -1,12 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {useDispatch} from 'react-redux';
 import {H3} from '../../atoms/text/Heading.jsx';
 import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
+import VoteCount from '../vote/VoteCount.jsx';
 import styles from './ThreadDetail.module.css';
+import {upVoteThread} from '../../redux/thread/threadSlice.js';
 
 function ThreadDetail({thread}) {
-  const {title, body, category, createdAt, owner} = thread;
+  const {
+    id, title, body, category, createdAt, owner, upVotesBy, downVotesBy,
+  } = thread;
+  const dispatch = useDispatch();
+
+  const handleUpVote = () => {
+    dispatch(upVoteThread(id));
+  };
 
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -25,6 +35,11 @@ function ThreadDetail({thread}) {
           <SmallText>{owner.name}</SmallText>
         </div>
         <SmallText>On: {formattedDate}</SmallText>
+        <VoteCount
+          upVotes={upVotesBy.length}
+          downVotes={downVotesBy.length}
+          onUpVote={handleUpVote}
+        />
       </div>
     </div>
   );

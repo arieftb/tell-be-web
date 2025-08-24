@@ -2,7 +2,7 @@ import InputField from './InputField.jsx';
 import PropTypes from 'prop-types';
 import {useCallback, useEffect, useState} from 'react';
 
-// eslint-disable-next-line max-len
+
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,6}$/;
 
 const EmailInputField = ({

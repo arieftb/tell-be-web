@@ -10,6 +10,8 @@ import LoginUseCase from '../../../application/auth/LoginUseCase.js';
 import {
   AuthRepository,
 } from '../../../data/persistence/auth/AuthRepository.js';
+import {GetCurrentUserUseCase} from
+  '../../../application/user/GetCurrentUserUseCase.js';
 
 export const registerUser = createAsyncThunk(
     'auth/registerUser',
@@ -55,6 +57,20 @@ export const registerAndLoginUser = createAsyncThunk(
       } catch (error) {
         const errorMessage = error.message ||
         'Failed to register and login';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const fetchCurrentUser = createAsyncThunk(
+    'auth/fetchCurrentUser',
+    async (_, {rejectWithValue}) => {
+      try {
+        const getCurrentUserUseCase = new GetCurrentUserUseCase();
+        const user = await getCurrentUserUseCase.execute();
+        return user;
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to fetch current user';
         return rejectWithValue(errorMessage);
       }
     },
@@ -123,6 +139,19 @@ const authSlice = createSlice({
           state.status = 'failed';
           state.error = action.payload;
           state.token = null;
+          state.user = null;
+        })
+        .addCase(fetchCurrentUser.pending, (state) => {
+          state.status = 'loading';
+        })
+        .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+          state.status = 'succeeded';
+          state.user = action.payload;
+          state.error = null;
+        })
+        .addCase(fetchCurrentUser.rejected, (state, action) => {
+          state.status = 'failed';
+          state.error = action.payload;
           state.user = null;
         });
   },

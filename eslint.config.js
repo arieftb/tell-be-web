@@ -49,6 +49,7 @@ export default defineConfig([
       'valid-jsdoc': 'off', // Disable the deprecated rule
       'require-jsdoc': 'off', // Disable the deprecated rule
       'new-cap': 'off', // Disable new-cap rule
+      'max-len': ['error', {code: 120, ignoreComments: true, ignoreTrailingComments: true, ignoreUrls: true, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreRegExpLiterals: true}],
     },
   },
 ]);
