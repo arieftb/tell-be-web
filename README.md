@@ -19,6 +19,9 @@ and scalable codebase. The application includes user authentication, thread and 
 - View thread detail
 - Submit a comment
 - Submit new thread
+- Up vote thread
+- Down vote thread
+- Neutral vote thread
 - View leaderboard
 
 ## Installation
@@ -51,30 +54,30 @@ The project follows a clean architecture approach with the following structure:
 ```markdown
 src/
 ├── application/
-│   ├── auth/
-│   ├── thread/
-│   └── user/
+│ ├── auth/
+│ ├── thread/
+│ └── user/
 ├── data/
-│   ├── infrastructure/
-│   │   ├── api/
-│   │   ├── auth/
-│   │   ├── thread/
-│   │   └── user/
-│   └── persistence/
-│       ├── auth/
-│       ├── thread/
-│       └── user/
+│ ├── infrastructure/
+│ │ ├── api/
+│ │ ├── auth/
+│ │ ├── thread/
+│ │ └── user/
+│ └── persistence/
+│ ├── auth/
+│ ├── thread/
+│ └── user/
 ├── domain/
-│   ├── auth/
-│   ├── thread/
-│   └── user/
+│ ├── auth/
+│ ├── thread/
+│ └── user/
 ├── presentation/
-│   ├── atoms/
-│   ├── molecules/
-│   ├── organisms/
-│   ├── pages/
-│   ├── redux/
-│   └── templates/
+│ ├── atoms/
+│ ├── molecules/
+│ ├── organisms/
+│ ├── pages/
+│ ├── redux/
+│ └── templates/
 ├── store/
 └── style/
 ```
@@ -88,7 +91,7 @@ src/
 - **Axios** - For making HTTP requests
 - **Vite** - Build tool and development server
 - **PropTypes** - Runtime type checking for React props
-- **ESLint** - For code linting and maintaining code quality
+- **ESLint** - For code linting and maintaining code quality, ensuring consistent code style and catching potential errors early in the development process.
 - **Zod** - For schema validation
 - **Clean Architecture** - For separation of concerns and maintainability
 - **Atomic Design** - For organizing UI components
