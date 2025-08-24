@@ -1,18 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {useDispatch} from 'react-redux';
 import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import styles from './CommentItem.module.css';
 import CommentVoteCountDisplay from './CommentVoteCountDisplay.jsx';
+import {upVoteComment} from '../../redux/thread/threadSlice.js';
 
-function CommentItem({comment}) {
-  const {content, createdAt, owner} = comment;
+function CommentItem({comment, threadId}) {
+  const {content, createdAt, owner, isUpVotedByCurrentUser} = comment;
+  const dispatch = useDispatch();
 
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
+
+  const onUpVote = () => {
+    dispatch(upVoteComment({threadId, commentId: comment.id}));
+  };
 
   return (
     <div className={styles.commentItem}>
@@ -27,7 +34,12 @@ function CommentItem({comment}) {
         className={styles.commentContent}
         dangerouslySetInnerHTML={{__html: content}}
       />
-      <CommentVoteCountDisplay upVotesBy={comment.upVotesBy} downVotesBy={comment.downVotesBy} />
+      <CommentVoteCountDisplay
+        upVotesBy={comment.upVotesBy}
+        downVotesBy={comment.downVotesBy}
+        onUpVote={onUpVote}
+        isUpVotedByCurrentUser={isUpVotedByCurrentUser}
+      />
     </div>
   );
 }
@@ -44,7 +56,9 @@ CommentItem.propTypes = {
     }).isRequired,
     upVotesBy: PropTypes.array.isRequired,
     downVotesBy: PropTypes.array.isRequired,
+    isUpVotedByCurrentUser: PropTypes.bool.isRequired,
   }).isRequired,
+  threadId: PropTypes.string.isRequired,
 };
 
 export default CommentItem;

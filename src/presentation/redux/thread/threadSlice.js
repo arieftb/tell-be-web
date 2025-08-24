@@ -24,6 +24,8 @@ import {
 } from '../../../application/thread/DownVoteUC';
 import {NeutralVoteThreadUseCase} from
   '../../../application/thread/NeutralVoteThreadUseCase.js';
+import {UpVoteCommentUseCase} from
+  '../../../application/thread/UpVoteCommentUseCase.js';
 
 export const fetchThreads = createAsyncThunk(
     'threads/fetchThreads',
@@ -131,6 +133,30 @@ export const neutralVoteThread = createAsyncThunk(
         return {vote};
       } catch (error) {
         const errorMessage = error.message || 'Failed to neutral-vote thread';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const upVoteComment = createAsyncThunk(
+    'threads/upVoteComment',
+    async ({threadId, commentId}, {rejectWithValue}) => {
+      try {
+        const upVoteCommentUseCase = new UpVoteCommentUseCase();
+        const result = await upVoteCommentUseCase.execute(threadId, commentId);
+        if (result === false) {
+          // User not logged in, do nothing as per requirement
+          return rejectWithValue('User not logged in');
+        }
+        const serializableVote = {
+          id: result.id,
+          userId: result.userId,
+          threadId: result.threadId,
+          voteType: result.voteType,
+        };
+        return {vote: serializableVote, commentId, threadId};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to up-vote comment';
         return rejectWithValue(errorMessage);
       }
     },
@@ -388,12 +414,35 @@ const threadSlice = createSlice({
         .addCase(neutralVoteThread.rejected, (state, action) => {
           state.neutralVoteStatus = 'failed';
           state.neutralVoteError = action.payload;
+        })
+        .addCase(upVoteComment.fulfilled, (state, action) => {
+          const {vote, commentId, threadId} = action.payload;
+          const {userId} = vote;
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newUpVotesBy = comment.upVotesBy.includes(userId) ?
+                    comment.upVotesBy.filter((id) => id !== userId) :
+                    [...comment.upVotesBy, userId];
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
         });
   },
 });
 
 export const {resetSubmitThreadStatus, setSelectedCategory} =
   threadSlice.actions;
+
 
 export const selectAllThreads = (state) => {
   const {threads, selectedCategory} = state.threads;
