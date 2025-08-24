@@ -16,6 +16,12 @@ import {
 import {
   AuthRepository,
 } from '../../../data/persistence/auth/AuthRepository.js';
+import {
+  UpVoteThreadUseCase,
+} from '../../../application/thread/UpVoteThreadUseCase.js';
+import {
+  DownVoteUC,
+} from '../../../application/thread/DownVoteUC';
 
 export const fetchThreads = createAsyncThunk(
     'threads/fetchThreads',
@@ -72,6 +78,34 @@ export const submitThread = createAsyncThunk(
     },
 );
 
+export const upVoteThread = createAsyncThunk(
+    'threads/upVoteThread',
+    async (threadId, {rejectWithValue}) => {
+      try {
+        const upVoteThreadUseCase = new UpVoteThreadUseCase();
+        const vote = await upVoteThreadUseCase.execute(threadId);
+        return {vote};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to up-vote thread';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const downVoteThread = createAsyncThunk(
+    'threads/downVoteThread',
+    async (threadId, {rejectWithValue}) => {
+      try {
+        const downVoteThreadUseCase = new DownVoteUC();
+        const vote = await downVoteThreadUseCase.execute(threadId);
+        return {vote};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to down-vote thread';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
 const threadSlice = createSlice({
   name: 'threads',
   initialState: {
@@ -87,6 +121,10 @@ const threadSlice = createSlice({
     submitThreadError: null,
     selectedCategory: null,
     categories: [],
+    upVoteStatus: 'idle',
+    upVoteError: null,
+    downVoteStatus: 'idle',
+    downVoteError: null,
   },
   reducers: {
     resetSubmitThreadStatus: (state) => {
@@ -154,6 +192,97 @@ const threadSlice = createSlice({
         .addCase(submitThread.rejected, (state, action) => {
           state.submitThreadStatus = 'failed';
           state.submitThreadError = action.payload;
+        })
+        .addCase(upVoteThread.pending, (state) => {
+          state.upVoteStatus = 'loading';
+        })
+        .addCase(upVoteThread.fulfilled, (state, action) => {
+          state.upVoteStatus = 'succeeded';
+          const {vote} = action.payload;
+          const {userId, threadId} = vote;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              const newUpVotesBy = thread.upVotesBy.includes(userId) ?
+                thread.upVotesBy.filter((id) => id !== userId) :
+                [...thread.upVotesBy, userId];
+              const newDownVotesBy = thread.downVotesBy.filter(
+                  (id) => id !== userId,
+              );
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newUpVotesBy = state.detailThread.upVotesBy.includes(userId) ?
+              state.detailThread.upVotesBy.filter((id) => id !== userId) :
+              [...state.detailThread.upVotesBy, userId];
+            const newDownVotesBy = state.detailThread.downVotesBy.filter(
+                (id) => id !== userId,
+            );
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+            };
+          }
+        })
+        .addCase(upVoteThread.rejected, (state, action) => {
+          state.upVoteStatus = 'failed';
+          state.upVoteError = action.payload;
+        })
+        .addCase(downVoteThread.pending, (state) => {
+          state.downVoteStatus = 'loading';
+        })
+        .addCase(downVoteThread.fulfilled, (state, action) => {
+          state.downVoteStatus = 'succeeded';
+          const {vote} = action.payload;
+          const {userId, threadId} = vote;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              const newDownVotesBy = thread.downVotesBy.includes(userId) ?
+                thread.downVotesBy.filter((id) => id !== userId) :
+                [...thread.downVotesBy, userId];
+              const newUpVotesBy = thread.upVotesBy.filter(
+                  (id) => id !== userId,
+              );
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newDownVotesBy =
+            state.detailThread.downVotesBy.includes(userId) ?
+              state.detailThread.downVotesBy.filter((id) => id !== userId) :
+              [...state.detailThread.downVotesBy, userId];
+            const newUpVotesBy = state.detailThread.upVotesBy.filter(
+                (id) => id !== userId,
+            );
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+            };
+          }
+        })
+        .addCase(downVoteThread.rejected, (state, action) => {
+          state.downVoteStatus = 'failed';
+          state.downVoteError = action.payload;
         });
   },
 });
@@ -185,5 +314,12 @@ export const selectSubmitThreadError = (state) =>
   state.threads.submitThreadError;
 export const selectCategories = (state) => state.threads.categories;
 export const selectSelectedCategory = (state) => state.threads.selectedCategory;
+export const selectUpVoteStatus = (state) => state.threads.upVoteStatus;
+export const selectUpVoteError = (state) => state.threads.upVoteError;
+export const selectDownVote = (state) =>
+  state.threads
+      .downVoteStatus;
+export const selectDownVoteError = (state) => state.threads.downVoteError;
+
 
 export default threadSlice.reducer;

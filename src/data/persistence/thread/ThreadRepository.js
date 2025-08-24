@@ -1,12 +1,15 @@
 import {
+  downVoteThread,
   getAllThreads,
   getThreadDetail,
   submitComment,
   submitThread,
+  upVoteThread,
 } from '../../infrastructure/thread/ThreadRemoteSource.js';
 import Thread from '../../../domain/thread/model/Thread.js';
 import DetailThread from '../../../domain/thread/model/DetailThread.js';
 import Comment from '../../../domain/thread/model/Comment.js';
+import Vote from '../../../domain/thread/model/Vote.js';
 
 export class ThreadRepository {
   async getAllThreads() {
@@ -46,6 +49,26 @@ export class ThreadRepository {
       return new Thread(threadData);
     } catch (error) {
       console.error('Error submitting thread:', error);
+      throw error;
+    }
+  }
+
+  async upVoteThread(threadId) {
+    try {
+      const voteData = await upVoteThread(threadId);
+      return new Vote(voteData);
+    } catch (error) {
+      console.error('Error up voting thread:', error);
+      throw error;
+    }
+  }
+
+  async downVoteThread(threadId) {
+    try {
+      const voteData = await downVoteThread(threadId);
+      return new Vote(voteData);
+    } catch (error) {
+      console.error('Error down voting thread:', error);
       throw error;
     }
   }

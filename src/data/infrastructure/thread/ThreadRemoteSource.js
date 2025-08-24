@@ -36,4 +36,27 @@ async function submitThread({title, body, category}) {
   return data.data.thread;
 }
 
-export {getAllThreads, getThreadDetail, submitComment, submitThread};
+async function upVoteThread(threadId) {
+  const token = localStorage.getItem('accessToken');
+  const {data} = await AxiosClient.post(`/threads/${threadId}/up-vote`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return data.data.vote;
+}
+
+async function downVoteThread(threadId) {
+  const token = localStorage.getItem('accessToken');
+  const {data} = await AxiosClient.post(`/threads/${threadId}/down-vote`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return data.data.vote;
+}
+
+export {
+  getAllThreads, getThreadDetail, submitComment, submitThread, upVoteThread,
+  downVoteThread,
+};

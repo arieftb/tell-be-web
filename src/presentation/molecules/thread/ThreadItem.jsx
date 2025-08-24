@@ -1,17 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
 import {H5} from '../../atoms/text/Heading.jsx';
 import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import VoteCount from '../vote/VoteCount.jsx';
 import styles from './ThreadItem.module.css';
+import {downVoteThread, upVoteThread} from '../../redux/thread/threadSlice.js';
 
 function ThreadItem({thread}) {
   const {
     id, title, body, category, createdAt, ownerName,
     ownerAvatar, totalComments, upVotesBy, downVotesBy,
   } = thread;
+  const dispatch = useDispatch();
+
+  const handleUpVote = () => {
+    dispatch(upVoteThread(id));
+  };
+
+  const handleDownVote = () => {
+    dispatch(downVoteThread(id));
+  };
 
   // Basic date formatting
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
@@ -36,6 +47,8 @@ function ThreadItem({thread}) {
           <VoteCount
             upVotes={upVotesBy.length}
             downVotes={downVotesBy.length}
+            onUpVote={handleUpVote}
+            onDownVote={handleDownVote}
           />
         </div>
       </div>
