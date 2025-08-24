@@ -5,7 +5,7 @@ import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import styles from './CommentItem.module.css';
 import CommentVoteCountDisplay from './CommentVoteCountDisplay.jsx';
-import {upVoteComment} from '../../redux/thread/threadSlice.js';
+import {upVoteComment, downVoteComment} from '../../redux/thread/threadSlice.js';
 
 function CommentItem({comment, threadId}) {
   const {content, createdAt, owner, isUpVotedByCurrentUser} = comment;
@@ -19,6 +19,10 @@ function CommentItem({comment, threadId}) {
 
   const onUpVote = () => {
     dispatch(upVoteComment({threadId, commentId: comment.id}));
+  };
+
+  const onDownVote = () => {
+    dispatch(downVoteComment({threadId, commentId: comment.id}));
   };
 
   return (
@@ -38,6 +42,7 @@ function CommentItem({comment, threadId}) {
         upVotesBy={comment.upVotesBy}
         downVotesBy={comment.downVotesBy}
         onUpVote={onUpVote}
+        onDownVote={onDownVote}
         isUpVotedByCurrentUser={isUpVotedByCurrentUser}
       />
     </div>

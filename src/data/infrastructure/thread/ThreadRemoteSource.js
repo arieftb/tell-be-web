@@ -80,7 +80,17 @@ async function upVoteComment(threadId, commentId) {
   return data.data.vote;
 }
 
+async function downVoteComment(threadId, commentId) {
+  const token = localStorage.getItem('accessToken');
+  const {data} = await AxiosClient.post(`/threads/${threadId}/comments/${commentId}/down-vote`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return data.data.vote;
+}
+
 export {
   getAllThreads, getThreadDetail, submitComment, submitThread,
-  upVoteThread, downVoteThread, neutralVoteThread, upVoteComment,
+  upVoteThread, downVoteThread, neutralVoteThread, upVoteComment, downVoteComment,
 };

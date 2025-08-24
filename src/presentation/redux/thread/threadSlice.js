@@ -26,6 +26,8 @@ import {NeutralVoteThreadUseCase} from
   '../../../application/thread/NeutralVoteThreadUseCase.js';
 import {UpVoteCommentUseCase} from
   '../../../application/thread/UpVoteCommentUseCase.js';
+import {DownVoteCommentUseCase} from
+  '../../../application/thread/DownVoteCommentUseCase.js';
 
 export const fetchThreads = createAsyncThunk(
     'threads/fetchThreads',
@@ -157,6 +159,30 @@ export const upVoteComment = createAsyncThunk(
         return {vote: serializableVote, commentId, threadId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to up-vote comment';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const downVoteComment = createAsyncThunk(
+    'threads/downVoteComment',
+    async ({threadId, commentId}, {rejectWithValue}) => {
+      try {
+        const downVoteCommentUseCase = new DownVoteCommentUseCase();
+        const result = await downVoteCommentUseCase.execute(threadId, commentId);
+        if (result === false) {
+          // User not logged in, do nothing as per requirement
+          return rejectWithValue('User not logged in');
+        }
+        const serializableVote = {
+          id: result.id,
+          userId: result.userId,
+          threadId: result.threadId,
+          voteType: result.voteType,
+        };
+        return {vote: serializableVote, commentId, threadId};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to down-vote comment';
         return rejectWithValue(errorMessage);
       }
     },
@@ -430,6 +456,28 @@ const threadSlice = createSlice({
                   return {
                     ...comment,
                     upVotesBy: newUpVotesBy,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(downVoteComment.fulfilled, (state, action) => {
+          const {vote, commentId, threadId} = action.payload;
+          const {userId} = vote;
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newDownVotesBy = comment.downVotesBy.includes(userId) ?
+                    comment.downVotesBy.filter((id) => id !== userId) :
+                    [...comment.downVotesBy, userId];
+                  return {
+                    ...comment,
+                    downVotesBy: newDownVotesBy,
                   };
                 }
                 return comment;
