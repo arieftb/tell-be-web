@@ -214,6 +214,8 @@ const threadSlice = createSlice({
                 ...thread,
                 upVotesBy: newUpVotesBy,
                 downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: newUpVotesBy.includes(userId),
+                isDownVotedByCurrentUser: newDownVotesBy.includes(userId),
               };
             }
             return thread;
@@ -231,6 +233,8 @@ const threadSlice = createSlice({
               ...state.detailThread,
               upVotesBy: newUpVotesBy,
               downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: newUpVotesBy.includes(userId),
+              isDownVotedByCurrentUser: newDownVotesBy.includes(userId),
             };
           }
         })
@@ -259,6 +263,8 @@ const threadSlice = createSlice({
                 ...thread,
                 upVotesBy: newUpVotesBy,
                 downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: newUpVotesBy.includes(userId),
+                isDownVotedByCurrentUser: newDownVotesBy.includes(userId),
               };
             }
             return thread;
@@ -277,6 +283,8 @@ const threadSlice = createSlice({
               ...state.detailThread,
               upVotesBy: newUpVotesBy,
               downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: newUpVotesBy.includes(userId),
+              isDownVotedByCurrentUser: newDownVotesBy.includes(userId),
             };
           }
         })

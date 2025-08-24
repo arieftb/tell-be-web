@@ -13,6 +13,7 @@ function ThreadItem({thread}) {
   const {
     id, title, body, category, createdAt, ownerName,
     ownerAvatar, totalComments, upVotesBy, downVotesBy,
+    isUpVotedByCurrentUser, isDownVotedByCurrentUser,
   } = thread;
   const dispatch = useDispatch();
 
@@ -49,6 +50,8 @@ function ThreadItem({thread}) {
             downVotes={downVotesBy.length}
             onUpVote={handleUpVote}
             onDownVote={handleDownVote}
+            isUpVotedByCurrentUser={isUpVotedByCurrentUser}
+            isDownVotedByCurrentUser={isDownVotedByCurrentUser}
           />
         </div>
       </div>
@@ -69,6 +72,8 @@ ThreadItem.propTypes = {
     ownerAvatar: PropTypes.string.isRequired,
     upVotesBy: PropTypes.arrayOf(PropTypes.string).isRequired,
     downVotesBy: PropTypes.arrayOf(PropTypes.string).isRequired,
+    isUpVotedByCurrentUser: PropTypes.bool,
+    isDownVotedByCurrentUser: PropTypes.bool,
   }).isRequired,
 };
 

@@ -10,4 +10,14 @@ async function getLeaderboards() {
   return data.data.leaderboards;
 }
 
-export {getAllUsers, getLeaderboards};
+async function getCurrentUser() {
+  const token = localStorage.getItem('accessToken');
+  const {data} = await AxiosClient.get('/users/me', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return data.data.user;
+}
+
+export {getAllUsers, getLeaderboards, getCurrentUser};
