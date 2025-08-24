@@ -5,10 +5,10 @@ import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import styles from './CommentItem.module.css';
 import CommentVoteCountDisplay from './CommentVoteCountDisplay.jsx';
-import {upVoteComment, downVoteComment} from '../../redux/thread/threadSlice.js';
+import {upVoteComment, downVoteComment, neutralVoteComment} from '../../redux/thread/threadSlice.js';
 
 function CommentItem({comment, threadId}) {
-  const {content, createdAt, owner, isUpVotedByCurrentUser} = comment;
+  const {content, createdAt, owner, isUpVotedByCurrentUser, isDownVotedByCurrentUser} = comment;
   const dispatch = useDispatch();
 
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
@@ -18,11 +18,19 @@ function CommentItem({comment, threadId}) {
   });
 
   const onUpVote = () => {
-    dispatch(upVoteComment({threadId, commentId: comment.id}));
+    if (isUpVotedByCurrentUser) {
+      dispatch(neutralVoteComment({threadId, commentId: comment.id}));
+    } else {
+      dispatch(upVoteComment({threadId, commentId: comment.id}));
+    }
   };
 
   const onDownVote = () => {
-    dispatch(downVoteComment({threadId, commentId: comment.id}));
+    if (isDownVotedByCurrentUser) {
+      dispatch(neutralVoteComment({threadId, commentId: comment.id}));
+    } else {
+      dispatch(downVoteComment({threadId, commentId: comment.id}));
+    }
   };
 
   return (
@@ -44,6 +52,7 @@ function CommentItem({comment, threadId}) {
         onUpVote={onUpVote}
         onDownVote={onDownVote}
         isUpVotedByCurrentUser={isUpVotedByCurrentUser}
+        isDownVotedByCurrentUser={isDownVotedByCurrentUser}
       />
     </div>
   );
@@ -62,6 +71,7 @@ CommentItem.propTypes = {
     upVotesBy: PropTypes.array.isRequired,
     downVotesBy: PropTypes.array.isRequired,
     isUpVotedByCurrentUser: PropTypes.bool.isRequired,
+    isDownVotedByCurrentUser: PropTypes.bool.isRequired,
   }).isRequired,
   threadId: PropTypes.string.isRequired,
 };

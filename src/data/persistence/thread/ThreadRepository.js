@@ -8,6 +8,7 @@ import {
   neutralVoteThread,
   upVoteComment,
   downVoteComment,
+  neutralVoteComment,
 } from '../../infrastructure/thread/ThreadRemoteSource.js';
 import Thread from '../../../domain/thread/model/Thread.js';
 import DetailThread from '../../../domain/thread/model/DetailThread.js';
@@ -116,6 +117,23 @@ export class ThreadRepository {
       return new Vote(transformedVoteData);
     } catch (error) {
       console.error('Error down voting comment:', error);
+      throw error;
+    }
+  }
+
+  async neutralVoteComment(threadId, commentId) {
+    try {
+      const voteData = await neutralVoteComment(threadId, commentId);
+      // Transform voteData to include threadId and match Vote model
+      const transformedVoteData = {
+        id: voteData.id,
+        userId: voteData.userId,
+        threadId: threadId, // Add threadId from method parameter
+        voteType: voteData.voteType,
+      };
+      return new Vote(transformedVoteData);
+    } catch (error) {
+      console.error('Error neutral voting comment:', error);
       throw error;
     }
   }

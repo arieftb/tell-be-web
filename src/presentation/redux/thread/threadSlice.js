@@ -28,6 +28,8 @@ import {UpVoteCommentUseCase} from
   '../../../application/thread/UpVoteCommentUseCase.js';
 import {DownVoteCommentUseCase} from
   '../../../application/thread/DownVoteCommentUseCase.js';
+import {NeutralVoteCommentUseCase} from
+  '../../../application/thread/NeutralVoteCommentUseCase.js';
 
 export const fetchThreads = createAsyncThunk(
     'threads/fetchThreads',
@@ -183,6 +185,30 @@ export const downVoteComment = createAsyncThunk(
         return {vote: serializableVote, commentId, threadId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to down-vote comment';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const neutralVoteComment = createAsyncThunk(
+    'threads/neutralVoteComment',
+    async ({threadId, commentId}, {rejectWithValue}) => {
+      try {
+        const neutralVoteCommentUseCase = new NeutralVoteCommentUseCase();
+        const result = await neutralVoteCommentUseCase.execute(threadId, commentId);
+        if (result === false) {
+          // User not logged in, do nothing as per requirement
+          return rejectWithValue('User not logged in');
+        }
+        const serializableVote = {
+          id: result.id,
+          userId: result.userId,
+          threadId: result.threadId,
+          voteType: result.voteType,
+        };
+        return {vote: serializableVote, commentId, threadId};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to neutral-vote comment';
         return rejectWithValue(errorMessage);
       }
     },
@@ -453,9 +479,13 @@ const threadSlice = createSlice({
                   const newUpVotesBy = comment.upVotesBy.includes(userId) ?
                     comment.upVotesBy.filter((id) => id !== userId) :
                     [...comment.upVotesBy, userId];
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== userId);
                   return {
                     ...comment,
                     upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: vote.voteType === 1,
+                    isDownVotedByCurrentUser: vote.voteType === -1,
                   };
                 }
                 return comment;
@@ -475,9 +505,37 @@ const threadSlice = createSlice({
                   const newDownVotesBy = comment.downVotesBy.includes(userId) ?
                     comment.downVotesBy.filter((id) => id !== userId) :
                     [...comment.downVotesBy, userId];
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== userId);
                   return {
                     ...comment,
+                    upVotesBy: newUpVotesBy,
                     downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: vote.voteType === 1,
+                    isDownVotedByCurrentUser: vote.voteType === -1,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(neutralVoteComment.fulfilled, (state, action) => {
+          const {vote, commentId, threadId} = action.payload;
+          const {userId} = vote;
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== userId);
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== userId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: false,
                   };
                 }
                 return comment;
