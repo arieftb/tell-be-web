@@ -7,7 +7,7 @@ import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import VoteCount from '../vote/VoteCount.jsx';
 import styles from './ThreadItem.module.css';
-import {downVoteThread, upVoteThread} from '../../redux/thread/threadSlice.js';
+import {downVoteThread, upVoteThread, neutralVoteThread} from '../../redux/thread/threadSlice.js';
 
 function ThreadItem({thread}) {
   const {
@@ -18,11 +18,19 @@ function ThreadItem({thread}) {
   const dispatch = useDispatch();
 
   const handleUpVote = () => {
-    dispatch(upVoteThread(id));
+    if (isUpVotedByCurrentUser) {
+      dispatch(neutralVoteThread(id));
+    } else {
+      dispatch(upVoteThread(id));
+    }
   };
 
   const handleDownVote = () => {
-    dispatch(downVoteThread(id));
+    if (isDownVotedByCurrentUser) {
+      dispatch(neutralVoteThread(id));
+    } else {
+      dispatch(downVoteThread(id));
+    }
   };
 
   // Basic date formatting

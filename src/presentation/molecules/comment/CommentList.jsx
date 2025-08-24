@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import CommentItem from './CommentItem.jsx';
 import styles from './CommentList.module.css';
 
-function CommentList({comments}) {
+function CommentList({comments, threadId}) {
   if (!comments || comments.length === 0) {
     return <div className={styles.noComments}>No comments yet.</div>;
   }
@@ -11,7 +11,7 @@ function CommentList({comments}) {
   return (
     <div className={styles.commentList}>
       {comments.map((comment) => (
-        <CommentItem key={comment.id} comment={comment}/>
+        <CommentItem key={comment.id} comment={comment} threadId={threadId}/>
       ))}
     </div>
   );
@@ -30,6 +30,7 @@ CommentList.propTypes = {
     upVotesBy: PropTypes.array.isRequired,
     downVotesBy: PropTypes.array.isRequired,
   })).isRequired,
+  threadId: PropTypes.string.isRequired,
 };
 
 export default CommentList;

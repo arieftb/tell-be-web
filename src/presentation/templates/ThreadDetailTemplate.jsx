@@ -16,7 +16,7 @@ function ThreadDetailTemplate(
         <ThreadDetailSection thread={thread} status={status} error={error}/>
         {status === 'succeeded' && <CommentInputSection/>}
         {thread && thread.comments && (
-          <CommentSection comments={thread.comments}/>
+          <CommentSection comments={thread.comments} threadId={thread.id}/>
         )}
       </main>
     </div>
@@ -24,7 +24,10 @@ function ThreadDetailTemplate(
 }
 
 ThreadDetailTemplate.propTypes = {
-  thread: PropTypes.object,
+  thread: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    comments: PropTypes.array,
+  }),
   status: PropTypes.string.isRequired,
   error: PropTypes.string,
 };

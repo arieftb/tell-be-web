@@ -24,6 +24,12 @@ import {
 } from '../../../application/thread/DownVoteUC';
 import {NeutralVoteThreadUseCase} from
   '../../../application/thread/NeutralVoteThreadUseCase.js';
+import {UpVoteCommentUseCase} from
+  '../../../application/thread/UpVoteCommentUseCase.js';
+import {DownVoteCommentUseCase} from
+  '../../../application/thread/DownVoteCommentUseCase.js';
+import {NeutralVoteCommentUseCase} from
+  '../../../application/thread/NeutralVoteCommentUseCase.js';
 
 export const fetchThreads = createAsyncThunk(
     'threads/fetchThreads',
@@ -90,10 +96,12 @@ export const upVoteThread = createAsyncThunk(
         if (thread && thread.isUpVotedByCurrentUser) {
           const neutralVoteThreadUseCase = new NeutralVoteThreadUseCase();
           const vote = await neutralVoteThreadUseCase.execute(threadId);
-          return {vote};
+          const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+          return {vote, threadId, currentUserId};
         }
         const vote = await upVoteThreadUseCase.execute(threadId);
-        return {vote};
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote, threadId, currentUserId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to up-vote thread';
         return rejectWithValue(errorMessage);
@@ -111,10 +119,12 @@ export const downVoteThread = createAsyncThunk(
         if (thread && thread.isDownVotedByCurrentUser) {
           const neutralVoteThreadUseCase = new NeutralVoteThreadUseCase();
           const vote = await neutralVoteThreadUseCase.execute(threadId);
-          return {vote};
+          const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+          return {vote, threadId, currentUserId};
         }
         const vote = await downVoteThreadUseCase.execute(threadId);
-        return {vote};
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote, threadId, currentUserId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to down-vote thread';
         return rejectWithValue(errorMessage);
@@ -124,13 +134,89 @@ export const downVoteThread = createAsyncThunk(
 
 export const neutralVoteThread = createAsyncThunk(
     'threads/neutralVoteThread',
-    async (threadId, {rejectWithValue}) => {
+    async (threadId, {rejectWithValue, getState}) => {
       try {
         const neutralVoteThreadUseCase = new NeutralVoteThreadUseCase();
         const vote = await neutralVoteThreadUseCase.execute(threadId);
-        return {vote};
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote, threadId, currentUserId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to neutral-vote thread';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const upVoteComment = createAsyncThunk(
+    'threads/upVoteComment',
+    async ({threadId, commentId}, {rejectWithValue, getState}) => {
+      try {
+        const upVoteCommentUseCase = new UpVoteCommentUseCase();
+        const result = await upVoteCommentUseCase.execute(threadId, commentId);
+        if (result === false) {
+          // User not logged in, do nothing as per requirement
+          return rejectWithValue('User not logged in');
+        }
+        const serializableVote = {
+          id: result.id,
+          userId: result.userId,
+          threadId: result.threadId,
+          voteType: result.voteType,
+        };
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote: serializableVote, commentId, threadId, currentUserId};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to up-vote comment';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const downVoteComment = createAsyncThunk(
+    'threads/downVoteComment',
+    async ({threadId, commentId}, {rejectWithValue, getState}) => {
+      try {
+        const downVoteCommentUseCase = new DownVoteCommentUseCase();
+        const result = await downVoteCommentUseCase.execute(threadId, commentId);
+        if (result === false) {
+          // User not logged in, do nothing as per requirement
+          return rejectWithValue('User not logged in');
+        }
+        const serializableVote = {
+          id: result.id,
+          userId: result.userId,
+          threadId: result.threadId,
+          voteType: result.voteType,
+        };
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote: serializableVote, commentId, threadId, currentUserId};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to down-vote comment';
+        return rejectWithValue(errorMessage);
+      }
+    },
+);
+
+export const neutralVoteComment = createAsyncThunk(
+    'threads/neutralVoteComment',
+    async ({threadId, commentId}, {rejectWithValue, getState}) => {
+      try {
+        const neutralVoteCommentUseCase = new NeutralVoteCommentUseCase();
+        const result = await neutralVoteCommentUseCase.execute(threadId, commentId);
+        if (result === false) {
+          // User not logged in, do nothing as per requirement
+          return rejectWithValue('User not logged in');
+        }
+        const serializableVote = {
+          id: result.id,
+          userId: result.userId,
+          threadId: result.threadId,
+          voteType: result.voteType,
+        };
+        const currentUserId = getState().auth.user ? getState().auth.user.id : null;
+        return {vote: serializableVote, commentId, threadId, currentUserId};
+      } catch (error) {
+        const errorMessage = error.message || 'Failed to neutral-vote comment';
         return rejectWithValue(errorMessage);
       }
     },
@@ -225,13 +311,79 @@ const threadSlice = createSlice({
           state.submitThreadStatus = 'failed';
           state.submitThreadError = action.payload;
         })
-        .addCase(upVoteThread.pending, (state) => {
-          state.upVoteStatus = 'loading';
+        .addCase(upVoteThread.pending, (state, action) => {
+          const {threadId} = action.meta.arg;
+          const currentUserId = action.meta.arg.currentUserId;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              const newUpVotesBy = thread.upVotesBy.includes(currentUserId) ?
+                thread.upVotesBy.filter((id) => id !== currentUserId) :
+                [...thread.upVotesBy, currentUserId];
+              const newDownVotesBy = thread.downVotesBy.filter((id) => id !== currentUserId);
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: true,
+                isDownVotedByCurrentUser: false,
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newUpVotesBy = state.detailThread.upVotesBy.includes(currentUserId) ?
+              state.detailThread.upVotesBy.filter((id) => id !== currentUserId) :
+              [...state.detailThread.upVotesBy, currentUserId];
+            const newDownVotesBy = state.detailThread.downVotesBy.filter((id) => id !== currentUserId);
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: true,
+              isDownVotedByCurrentUser: false,
+            };
+          }
+        })
+        .addCase(upVoteThread.rejected, (state, action) => {
+          const {threadId} = action.meta.arg;
+          const currentUserId = action.meta.arg.currentUserId;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              const newUpVotesBy = thread.upVotesBy.filter((id) => id !== currentUserId);
+              const newDownVotesBy = thread.downVotesBy.filter((id) => id !== currentUserId);
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: false,
+                isDownVotedByCurrentUser: false,
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newUpVotesBy = state.detailThread.upVotesBy.filter((id) => id !== currentUserId);
+            const newDownVotesBy = state.detailThread.downVotesBy.filter((id) => id !== currentUserId);
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: false,
+              isDownVotedByCurrentUser: false,
+            };
+          }
         })
         .addCase(upVoteThread.fulfilled, (state, action) => {
-          state.upVoteStatus = 'succeeded';
-          const {vote} = action.payload;
-          const {userId, threadId} = vote;
+          const {vote, threadId} = action.payload;
+          const {userId} = vote;
 
           state.threads = state.threads.map((thread) => {
             if (thread.id === threadId) {
@@ -278,17 +430,79 @@ const threadSlice = createSlice({
             };
           }
         })
-        .addCase(upVoteThread.rejected, (state, action) => {
-          state.upVoteStatus = 'failed';
-          state.upVoteError = action.payload;
+        .addCase(downVoteThread.pending, (state, action) => {
+          const {threadId} = action.meta.arg;
+          const currentUserId = action.meta.arg.currentUserId;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              const newDownVotesBy = thread.downVotesBy.includes(currentUserId) ?
+                thread.downVotesBy.filter((id) => id !== currentUserId) :
+                [...thread.downVotesBy, currentUserId];
+              const newUpVotesBy = thread.upVotesBy.filter((id) => id !== currentUserId);
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: false,
+                isDownVotedByCurrentUser: true,
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newDownVotesBy = state.detailThread.downVotesBy.includes(currentUserId) ?
+              state.detailThread.downVotesBy.filter((id) => id !== currentUserId) :
+              [...state.detailThread.downVotesBy, currentUserId];
+            const newUpVotesBy = state.detailThread.upVotesBy.filter((id) => id !== currentUserId);
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: false,
+              isDownVotedByCurrentUser: true,
+            };
+          }
         })
-        .addCase(downVoteThread.pending, (state) => {
-          state.downVoteStatus = 'loading';
+        .addCase(downVoteThread.rejected, (state, action) => {
+          const {threadId} = action.meta.arg;
+          const currentUserId = action.meta.arg.currentUserId;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              const newDownVotesBy = thread.downVotesBy.filter((id) => id !== currentUserId);
+              const newUpVotesBy = thread.upVotesBy.filter((id) => id !== currentUserId);
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: false,
+                isDownVotedByCurrentUser: false,
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newDownVotesBy = state.detailThread.downVotesBy.filter((id) => id !== currentUserId);
+            const newUpVotesBy = state.detailThread.upVotesBy.filter((id) => id !== currentUserId);
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: false,
+              isDownVotedByCurrentUser: false,
+            };
+          }
         })
         .addCase(downVoteThread.fulfilled, (state, action) => {
-          state.downVoteStatus = 'succeeded';
-          const {vote} = action.payload;
-          const {userId, threadId} = vote;
+          const {vote, threadId} = action.payload;
+          const {userId} = vote;
 
           state.threads = state.threads.map((thread) => {
             if (thread.id === threadId) {
@@ -336,17 +550,90 @@ const threadSlice = createSlice({
             };
           }
         })
-        .addCase(downVoteThread.rejected, (state, action) => {
-          state.downVoteStatus = 'failed';
-          state.downVoteError = action.payload;
+        .addCase(neutralVoteThread.pending, (state, action) => {
+          const {threadId} = action.meta.arg;
+          const currentUserId = action.meta.arg.currentUserId;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              const newUpVotesBy = thread.upVotesBy.filter((id) => id !== currentUserId);
+              const newDownVotesBy = thread.downVotesBy.filter((id) => id !== currentUserId);
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: false,
+                isDownVotedByCurrentUser: false,
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newUpVotesBy = state.detailThread.upVotesBy.filter((id) => id !== currentUserId);
+            const newDownVotesBy = state.detailThread.downVotesBy.filter((id) => id !== currentUserId);
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: false,
+              isDownVotedByCurrentUser: false,
+            };
+          }
         })
-        .addCase(neutralVoteThread.pending, (state) => {
-          state.neutralVoteStatus = 'loading';
+        .addCase(neutralVoteThread.rejected, (state, action) => {
+          const {threadId} = action.meta.arg;
+          const currentUserId = action.meta.arg.currentUserId;
+
+          state.threads = state.threads.map((thread) => {
+            if (thread.id === threadId) {
+              // Revert to previous state based on currentUserId
+              // This is a simplified revert, assuming the user was either upvoted or downvoted before
+              const originalUpVoted = thread.upVotesBy.includes(currentUserId);
+              const originalDownVoted = thread.downVotesBy.includes(currentUserId);
+
+              let newUpVotesBy = thread.upVotesBy.filter((id) => id !== currentUserId);
+              let newDownVotesBy = thread.downVotesBy.filter((id) => id !== currentUserId);
+
+              if (originalUpVoted) {
+                newUpVotesBy = [...newUpVotesBy, currentUserId];
+              } else if (originalDownVoted) {
+                newDownVotesBy = [...newDownVotesBy, currentUserId];
+              }
+
+              return {
+                ...thread,
+                upVotesBy: newUpVotesBy,
+                downVotesBy: newDownVotesBy,
+                isUpVotedByCurrentUser: originalUpVoted,
+                isDownVotedByCurrentUser: originalDownVoted,
+              };
+            }
+            return thread;
+          });
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            const newUpVotesBy = state.detailThread.upVotesBy.filter((id) => id !== currentUserId);
+            const newDownVotesBy = state.detailThread.downVotesBy.filter((id) => id !== currentUserId);
+
+            state.detailThread = {
+              ...state.detailThread,
+              upVotesBy: newUpVotesBy,
+              downVotesBy: newDownVotesBy,
+              isUpVotedByCurrentUser: newUpVotesBy.includes(
+                  currentUserId,
+              ),
+              isDownVotedByCurrentUser: newDownVotesBy.includes(
+                  currentUserId,
+              ),
+            };
+          }
         })
         .addCase(neutralVoteThread.fulfilled, (state, action) => {
-          state.neutralVoteStatus = 'succeeded';
-          const {vote} = action.payload;
-          const {userId, threadId} = vote;
+          const {vote, threadId} = action.payload;
+          const {userId} = vote;
 
           state.threads = state.threads.map((thread) => {
             if (thread.id === threadId) {
@@ -385,15 +672,194 @@ const threadSlice = createSlice({
             };
           }
         })
-        .addCase(neutralVoteThread.rejected, (state, action) => {
-          state.neutralVoteStatus = 'failed';
-          state.neutralVoteError = action.payload;
+        .addCase(upVoteComment.pending, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newUpVotesBy = comment.upVotesBy.includes(currentUserId) ?
+                    comment.upVotesBy.filter((id) => id !== currentUserId) :
+                    [...comment.upVotesBy, currentUserId];
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: true,
+                    isDownVotedByCurrentUser: false,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(upVoteComment.rejected, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: false,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(upVoteComment.fulfilled, () => {
+          // The optimistic update in pending case already handled the state change.
+          // This fulfilled case can be used for any final consistency checks if needed.
+          // No explicit state modification needed here unless backend response dictates a different state.
+        })
+        .addCase(downVoteComment.pending, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newDownVotesBy = comment.downVotesBy.includes(currentUserId) ?
+                    comment.downVotesBy.filter((id) => id !== currentUserId) :
+                    [...comment.downVotesBy, currentUserId];
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: true,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(downVoteComment.rejected, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: false,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(downVoteComment.fulfilled, () => {
+          // The optimistic update in pending case already handled the state change.
+          // This fulfilled case can be used for any final consistency checks if needed.
+          // No explicit state modification needed here unless backend response dictates a different state.
+        })
+        .addCase(neutralVoteComment.pending, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: false,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(neutralVoteComment.rejected, (state, action) => {
+          const {threadId, commentId, currentUserId} = action.meta.arg;
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  // Revert to previous state based on currentUserId
+                  // This is a simplified revert, assuming the user was either upvoted or downvoted before
+                  const originalUpVoted = comment.upVotesBy.includes(currentUserId);
+                  const originalDownVoted = comment.downVotesBy.includes(currentUserId);
+
+                  let newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
+                  let newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
+
+                  if (originalUpVoted) {
+                    newUpVotesBy = [...newUpVotesBy, currentUserId];
+                  } else if (originalDownVoted) {
+                    newDownVotesBy = [...newDownVotesBy, currentUserId];
+                  }
+
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: originalUpVoted,
+                    isDownVotedByCurrentUser: originalDownVoted,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
+        })
+        .addCase(neutralVoteComment.fulfilled, (state, action) => {
+          const {vote, commentId, threadId} = action.payload;
+          const {userId} = vote;
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== userId);
+                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== userId);
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: false,
+                    isDownVotedByCurrentUser: false,
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
         });
   },
 });
 
 export const {resetSubmitThreadStatus, setSelectedCategory} =
   threadSlice.actions;
+
 
 export const selectAllThreads = (state) => {
   const {threads, selectedCategory} = state.threads;
