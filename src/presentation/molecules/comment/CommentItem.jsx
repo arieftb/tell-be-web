@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {SmallText} from '../../atoms/text/Text.jsx';
 import Avatar from '../../atoms/avatar/Avatar.jsx';
 import styles from './CommentItem.module.css';
+import CommentVoteCountDisplay from './CommentVoteCountDisplay.jsx';
 
 function CommentItem({comment}) {
   const {content, createdAt, owner} = comment;
@@ -26,6 +27,7 @@ function CommentItem({comment}) {
         className={styles.commentContent}
         dangerouslySetInnerHTML={{__html: content}}
       />
+      <CommentVoteCountDisplay upVotesBy={comment.upVotesBy} downVotesBy={comment.downVotesBy} />
     </div>
   );
 }
