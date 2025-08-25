@@ -8,6 +8,7 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import react from 'eslint-plugin-react';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
+import vitest from 'eslint-plugin-vitest';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,6 +51,20 @@ export default defineConfig([
       'require-jsdoc': 'off', // Disable the deprecated rule
       'new-cap': 'off', // Disable new-cap rule
       'max-len': ['error', {code: 120, ignoreComments: true, ignoreTrailingComments: true, ignoreUrls: true, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreRegExpLiterals: true}],
+    },
+  },
+  {
+    files: ['**/*.test.js'],
+    plugins: {
+      vitest,
+    },
+    rules: vitest.configs.recommended.rules,
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+        ...vitest.environments.env.globals,
+      },
     },
   },
 ]);
