@@ -1,10 +1,12 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {vi} from 'vitest';
-import threadReducer, {fetchThreads} from './threadSlice';
+import threadReducer, {fetchThreads, fetchThreadDetail} from './threadSlice';
 import AllThreadsUseCase from '../../../application/thread/GetAllThreadsUseCase';
+import ThreadDetailUseCase from '../../../application/thread/GetThreadDetailUseCase';
 
 // Mock the AllThreadsUseCase
 vi.mock('../../../application/thread/GetAllThreadsUseCase');
+vi.mock('../../../application/thread/GetThreadDetailUseCase');
 
 describe('fetchThreads thunk', () => {
   let store;
@@ -56,5 +58,61 @@ describe('fetchThreads thunk', () => {
     expect(state.status).toBe('failed');
     expect(state.threads).toEqual([]);
     expect(state.error).toBe(errorMessage);
+  });
+});
+
+describe('fetchThreadDetail thunk', () => {
+  let store;
+
+  beforeEach(() => {
+    store = configureStore({
+      reducer: {
+        threads: threadReducer,
+      },
+    });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should handle successful fetch of thread detail and update state correctly', async () => {
+    // Given: Thread with given ID exists
+    const threadId = 'thread-1';
+    const mockThreadDetail = {id: threadId, title: 'Detail Thread', body: 'Detail Body'};
+    ThreadDetailUseCase.mockImplementation(() => ({
+      execute: (id) => {
+        if (id === threadId) {
+          return Promise.resolve(mockThreadDetail);
+        }
+        return Promise.reject(new Error('Thread not found'));
+      },
+    }));
+
+    // When: fetchThreadDetail(threadId) is dispatched
+    await store.dispatch(fetchThreadDetail(threadId));
+
+    // Then: state.detailThreadStatus = 'succeeded', state.detailThread = fetched thread
+    const state = store.getState().threads;
+    expect(state.detailThreadStatus).toBe('succeeded');
+    expect(state.detailThread).toEqual(mockThreadDetail);
+  });
+
+  it('should handle failed fetch of thread detail and update state correctly', async () => {
+    // Given: Repository throws an error
+    const threadId = 'thread-1';
+    const errorMessage = 'Failed to fetch thread detail';
+    ThreadDetailUseCase.mockImplementation(() => ({
+      execute: () => Promise.reject(new Error(errorMessage)),
+    }));
+
+    // When: fetchThreadDetail(threadId) is dispatched
+    await store.dispatch(fetchThreadDetail(threadId));
+
+    // Then: state.detailThreadStatus = 'failed', state.detailThread = null, state.detailThreadError = error message
+    const state = store.getState().threads;
+    expect(state.detailThreadStatus).toBe('failed');
+    expect(state.detailThread).toBeNull();
+    expect(state.detailThreadError).toBe(errorMessage);
   });
 });
