@@ -693,30 +693,17 @@ const threadSlice = createSlice({
         })
         .addCase(upVoteComment.fulfilled, (state, action) => {
           const {vote, commentId, threadId} = action.payload;
-          const {userId} = vote;
 
           if (state.detailThread && state.detailThread.id === threadId) {
             state.detailThread = {
               ...state.detailThread,
               comments: state.detailThread.comments.map((comment) => {
                 if (comment.id === commentId) {
-                  const newUpVotesBy = comment.upVotesBy.includes(userId) ?
-                    comment.upVotesBy.filter((id) => id !== userId) :
-                    [...comment.upVotesBy, userId];
-                  const newDownVotesBy = comment.downVotesBy.filter(
-                      (id) => id !== userId,
-                  );
-
+                  // Optimistic update already handled in pending, just ensure flags are correct
                   return {
                     ...comment,
-                    upVotesBy: newUpVotesBy,
-                    downVotesBy: newDownVotesBy,
-                    isUpVotedByCurrentUser: newUpVotesBy.includes(
-                        userId,
-                    ),
-                    isDownVotedByCurrentUser: newDownVotesBy.includes(
-                        userId,
-                    ),
+                    isUpVotedByCurrentUser: vote.voteType === 1,
+                    isDownVotedByCurrentUser: vote.voteType === -1,
                   };
                 }
                 return comment;
@@ -765,30 +752,17 @@ const threadSlice = createSlice({
         })
         .addCase(downVoteComment.fulfilled, (state, action) => {
           const {vote, commentId, threadId} = action.payload;
-          const {userId} = vote;
 
           if (state.detailThread && state.detailThread.id === threadId) {
             state.detailThread = {
               ...state.detailThread,
               comments: state.detailThread.comments.map((comment) => {
                 if (comment.id === commentId) {
-                  const newDownVotesBy = comment.downVotesBy.includes(userId) ?
-                    comment.downVotesBy.filter((id) => id !== userId) :
-                    [...comment.downVotesBy, userId];
-                  const newUpVotesBy = comment.upVotesBy.filter(
-                      (id) => id !== userId,
-                  );
-
+                  // Optimistic update already handled in pending, just ensure flags are correct
                   return {
                     ...comment,
-                    upVotesBy: newUpVotesBy,
-                    downVotesBy: newDownVotesBy,
-                    isUpVotedByCurrentUser: newUpVotesBy.includes(
-                        userId,
-                    ),
-                    isDownVotedByCurrentUser: newDownVotesBy.includes(
-                        userId,
-                    ),
+                    isUpVotedByCurrentUser: vote.voteType === 1,
+                    isDownVotedByCurrentUser: vote.voteType === -1,
                   };
                 }
                 return comment;

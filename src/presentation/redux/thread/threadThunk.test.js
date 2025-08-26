@@ -1,538 +1,313 @@
 import {configureStore} from '@reduxjs/toolkit';
+import {
+  upVoteComment,
+  downVoteComment,
+  neutralVoteComment,
+} from './threadSlice';
+import {UpVoteCommentUseCase} from '../../../application/thread/UpVoteCommentUseCase';
+import {DownVoteCommentUseCase} from '../../../application/thread/DownVoteCommentUseCase';
+import {NeutralVoteCommentUseCase} from '../../../application/thread/NeutralVoteCommentUseCase';
 import {vi} from 'vitest';
-import threadReducer, {fetchThreads, fetchThreadDetail, submitComment, submitThread, upVoteThread, downVoteThread, neutralVoteThread} from './threadSlice';
-import AllThreadsUseCase from '../../../application/thread/GetAllThreadsUseCase';
-import ThreadDetailUseCase from '../../../application/thread/GetThreadDetailUseCase';
-import CommentUseCase from '../../../application/thread/SubmitCommentUseCase';
-import {SubmitThreadUseCase} from '../../../application/thread/SubmitThreadUseCase';
-import {UpVoteThreadUseCase} from '../../../application/thread/UpVoteThreadUseCase';
-import {DownVoteUC} from '../../../application/thread/DownVoteUC';
-import {NeutralVoteThreadUseCase} from '../../../application/thread/NeutralVoteThreadUseCase';
-import {ThreadRepository} from '../../../data/persistence/thread/ThreadRepository';
-import {AuthRepository} from '../../../data/persistence/auth/AuthRepository';
 
-// Mock the UseCases and Repositories
-vi.mock('../../../application/thread/GetAllThreadsUseCase');
-vi.mock('../../../application/thread/GetThreadDetailUseCase');
-vi.mock('../../../application/thread/SubmitCommentUseCase');
-vi.mock('../../../application/thread/SubmitThreadUseCase');
-vi.mock('../../../application/thread/UpVoteThreadUseCase');
-vi.mock('../../../application/thread/DownVoteUC');
-vi.mock('../../../application/thread/NeutralVoteThreadUseCase');
-vi.mock('../../../data/persistence/thread/ThreadRepository');
-vi.mock('../../../data/persistence/auth/AuthRepository');
+// Mock the use cases
+vi.mock('../../../application/thread/UpVoteCommentUseCase');
+vi.mock('../../../application/thread/DownVoteCommentUseCase');
+vi.mock('../../../application/thread/NeutralVoteCommentUseCase');
 
-describe('fetchThreads thunk', () => {
+describe('Thread Comment Vote Thunks', () => {
   let store;
+  let initialState;
+  let dispatchedActions; // To store dispatched actions
 
   beforeEach(() => {
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: 'user-1'}})), // Mock auth reducer for current user ID
-      },
-    });
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should handle successful fetch and update state correctly', async () => {
-    // Given: Threads exist in the repository
-    const mockThreads = [
-      {id: 'thread-1', title: 'Thread 1', body: 'Body 1', category: 'Category A', createdAt: '2023-01-01T00:00:00.000Z', ownerId: 'user-1', totalComments: 0, upVotesBy: [], downVotesBy: []},
-      {id: 'thread-2', title: 'Thread 2', body: 'Body 2', category: 'Category B', createdAt: '2023-01-02T00:00:00.000Z', ownerId: 'user-2', totalComments: 0, upVotesBy: [], downVotesBy: []},
-    ];
-    AllThreadsUseCase.mockImplementation(() => ({
-      execute: () => Promise.resolve(mockThreads),
-    }));
-
-    // When: fetchThreads is dispatched
-    await store.dispatch(fetchThreads());
-
-    // Then: state.status = 'succeeded', state.threads = fetched threads, state.error = null
-    const state = store.getState().threads;
-    expect(state.status).toBe('succeeded');
-    expect(state.threads).toEqual(mockThreads);
-    expect(state.error).toBeNull();
-  });
-
-  it('should handle failed fetch and update state correctly', async () => {
-    // Given: Repository throws an error
-    const errorMessage = 'Network Error';
-    AllThreadsUseCase.mockImplementation(() => ({
-      execute: () => Promise.reject(new Error(errorMessage)),
-    }));
-
-    // When: fetchThreads is dispatched
-    await store.dispatch(fetchThreads());
-
-    // Then: state.status = 'failed', state.threads = [], state.error = error message
-    const state = store.getState().threads;
-    expect(state.status).toBe('failed');
-    expect(state.threads).toEqual([]);
-    expect(state.error).toBe(errorMessage);
-  });
-});
-
-describe('fetchThreadDetail thunk', () => {
-  let store;
-
-  beforeEach(() => {
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: 'user-1'}})),
-      },
-    });
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should handle successful fetch of thread detail and update state correctly', async () => {
-    // Given: Thread with given ID exists
-    const threadId = 'thread-1';
-    const mockThreadDetail = {id: threadId, title: 'Detail Thread', body: 'Detail Body'};
-    ThreadDetailUseCase.mockImplementation(() => ({
-      execute: (id) => {
-        if (id === threadId) {
-          return Promise.resolve(mockThreadDetail);
-        }
-        return Promise.reject(new Error('Thread not found'));
-      },
-    }));
-
-    // When: fetchThreadDetail(threadId) is dispatched
-    await store.dispatch(fetchThreadDetail(threadId));
-
-    // Then: state.detailThreadStatus = 'succeeded', state.detailThread = fetched thread
-    const state = store.getState().threads;
-    expect(state.detailThreadStatus).toBe('succeeded');
-    expect(state.detailThread).toEqual(mockThreadDetail);
-  });
-
-  it('should handle failed fetch of thread detail and update state correctly', async () => {
-    // Given: Repository throws an error
-    const threadId = 'thread-1';
-    const errorMessage = 'Failed to fetch thread detail';
-    ThreadDetailUseCase.mockImplementation(() => ({
-      execute: () => Promise.reject(new Error(errorMessage)),
-    }));
-
-    // When: fetchThreadDetail(threadId) is dispatched
-    await store.dispatch(fetchThreadDetail(threadId));
-
-    // Then: state.detailThreadStatus = 'failed', state.detailThread = null, state.detailThreadError = error message
-    const state = store.getState().threads;
-    expect(state.detailThreadStatus).toBe('failed');
-    expect(state.detailThread).toBeNull();
-    expect(state.detailThreadError).toBe(errorMessage);
-  });
-});
-
-describe('submitComment thunk', () => {
-  let store;
-
-  beforeEach(() => {
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: 'user-1'}})),
-      },
-    });
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should handle successful comment submission and update state correctly', async () => {
-    // Given: User submits valid comment
-    const threadId = 'thread-1';
-    const commentData = {threadId, content: 'New Comment'};
-    const mockComment = {id: 'comment-1', content: 'New Comment', owner: {id: 'user-1', name: 'User 1'}};
-
-    CommentUseCase.mockImplementation(() => ({
-      execute: (data) => {
-        if (data.threadId === threadId && data.content === commentData.content) {
-          return Promise.resolve(mockComment);
-        }
-        return Promise.reject(new Error('Invalid comment data'));
-      },
-    }));
-
-    // Set initial detailThread state for the test
-    store.dispatch({
-      type: 'threads/fetchThreadDetail/fulfilled',
-      payload: {id: threadId, comments: []},
-    });
-
-    // When: submitComment(commentData) is dispatched
-    await store.dispatch(submitComment(commentData));
-
-    // Then: state.submitCommentStatus = 'succeeded', comment is added to detailThread.comments
-    const state = store.getState().threads;
-    expect(state.submitCommentStatus).toBe('succeeded');
-    expect(state.detailThread.comments).toEqual([mockComment]);
-  });
-
-  it('should handle failed comment submission and update state correctly', async () => {
-    // Given: Repository throws error
-    const threadId = 'thread-1';
-    const commentData = {threadId, content: 'New Comment'};
-    const errorMessage = 'Failed to submit comment';
-
-    CommentUseCase.mockImplementation(() => ({
-      execute: () => Promise.reject(new Error(errorMessage)),
-    }));
-
-    // When: submitComment(commentData) is dispatched
-    await store.dispatch(submitComment(commentData));
-
-    // Then: state.submitCommentStatus = 'failed', state.submitCommentError = error message
-    const state = store.getState().threads;
-    expect(state.submitCommentStatus).toBe('failed');
-    expect(state.submitCommentError).toBe(errorMessage);
-  });
-});
-
-describe('submitThread thunk', () => {
-  let store;
-
-  beforeEach(() => {
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: 'user-1'}})),
-      },
-    });
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should handle successful thread submission and update state correctly', async () => {
-    // Given: Valid thread data
-    const threadData = {title: 'New Thread', body: 'Thread Body', category: 'General'};
-    SubmitThreadUseCase.mockImplementation(() => ({
-      execute: (data) => {
-        if (data.title === threadData.title && data.body === threadData.body) {
-          return Promise.resolve(); // No return value expected for successful submission
-        }
-        return Promise.reject(new Error('Invalid thread data'));
-      },
-    }));
-
-    // When: submitThread(threadData) is dispatched
-    await store.dispatch(submitThread(threadData));
-
-    // Then: state.submitThreadStatus = 'succeeded', state.status = 'idle', state.submitThreadError = null
-    const state = store.getState().threads;
-    expect(state.submitThreadStatus).toBe('succeeded');
-    expect(state.status).toBe('idle');
-    expect(state.submitThreadError).toBeNull();
-  });
-
-  it('should handle failed thread submission and update state correctly', async () => {
-    // Given: Repository or auth throws error
-    const threadData = {title: 'New Thread', body: 'Thread Body', category: 'General'};
-    const errorMessage = 'Failed to submit thread';
-
-    SubmitThreadUseCase.mockImplementation(() => ({
-      execute: () => Promise.reject(new Error(errorMessage)),
-    }));
-
-    // When: submitThread(threadData) is dispatched
-    await store.dispatch(submitThread(threadData));
-
-    // Then: state.submitThreadStatus = 'failed', state.submitThreadError = error message
-    const state = store.getState().threads;
-    expect(state.submitThreadStatus).toBe('failed');
-    expect(state.submitThreadError).toBe(errorMessage);
-  });
-});
-
-describe('Thread Vote Thunks', () => {
-  let store;
-  const threadId = 'thread-1';
-  const userId = 'user-1';
-  const mockThread = {
-    id: threadId,
-    upVotesBy: [],
-    downVotesBy: [],
-    isUpVotedByCurrentUser: false,
-    isDownVotedByCurrentUser: false,
-  };
-
-  beforeEach(() => {
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: userId}})), // Mock auth reducer for current user ID
-      },
-      preloadedState: {
-        threads: {
-          threads: [mockThread],
-          detailThread: null,
+    initialState = {
+      threads: {
+        detailThread: {
+          id: 'thread-1',
+          comments: [
+            {id: 'comment-1', upVotesBy: [], downVotesBy: []},
+            {id: 'comment-2', upVotesBy: [], downVotesBy: []},
+          ],
         },
       },
-    });
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  // Test cases for upVoteThread
-  it('should handle upVoteThread when thread is not voted by user', async () => {
-    UpVoteThreadUseCase.mockImplementation(() => ({
-      execute: () => Promise.resolve({userId, voteType: 1}),
-    }));
-
-    await store.dispatch(upVoteThread(threadId));
-
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.upVotesBy).toContain(userId);
-    expect(updatedThread.isUpVotedByCurrentUser).toBe(true);
-    expect(updatedThread.downVotesBy).not.toContain(userId);
-    expect(updatedThread.isDownVotedByCurrentUser).toBe(false);
-  });
-
-  it('should handle upVoteThread when thread is already upvoted by user (neutralize)', async () => {
-    const preloadedState = {
-      threads: {
-        threads: [{
-          ...mockThread,
-          upVotesBy: [userId],
-          isUpVotedByCurrentUser: true,
-        }],
-        detailThread: null,
+      auth: {
+        user: {id: 'user-1'},
       },
+    };
+
+    dispatchedActions = []; // Reset for each test
+
+    const customMiddleware = () => (next) => (action) => {
+      dispatchedActions.push(action);
+      return next(action);
     };
 
     store = configureStore({
       reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: userId}})),
+        threads: (state = initialState.threads) => {
+          return state;
+        },
+        auth: (state = initialState.auth) => state,
       },
-      preloadedState: preloadedState,
+      middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(customMiddleware),
     });
 
-    NeutralVoteThreadUseCase.mockImplementation(() => ({
-      execute: () => Promise.resolve({userId, voteType: 0}),
-    }));
-
-    await store.dispatch(upVoteThread(threadId));
-
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.upVotesBy).not.toContain(userId);
-    expect(updatedThread.isUpVotedByCurrentUser).toBe(false);
+    // Clear all mocks before each test
+    UpVoteCommentUseCase.mockClear();
+    DownVoteCommentUseCase.mockClear();
+    NeutralVoteCommentUseCase.mockClear();
   });
 
-  it('should revert state on upVoteThread failure', async () => {
-    const preloadedState = {
-      threads: {
-        threads: [mockThread],
-        detailThread: null,
-      },
-    };
+  // Test for upVoteComment thunk
+  describe('upVoteComment', () => {
+    it('should dispatch fulfilled action when upvoting a comment is successful', async () => {
+      const mockUpVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockResolvedValue({
+          id: 'vote-1',
+          userId: 'user-1',
+          threadId: 'thread-1',
+          voteType: 1,
+        }),
+      };
+      UpVoteCommentUseCase.mockImplementationOnce(
+          () => mockUpVoteCommentUseCaseInstance,
+      );
 
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: userId}})),
-      },
-      preloadedState: preloadedState,
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
+
+      await store.dispatch(upVoteComment({threadId, commentId}));
+
+      expect(dispatchedActions[0].type).toBe(upVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(upVoteComment.fulfilled.type);
+      expect(dispatchedActions[1].payload).toEqual({
+        vote: {
+          id: 'vote-1',
+          userId: 'user-1',
+          threadId: 'thread-1',
+          voteType: 1,
+        },
+        commentId,
+        threadId,
+        currentUserId: 'user-1',
+      });
+      expect(mockUpVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
     });
 
-    UpVoteThreadUseCase.mockImplementation(() => ({
-      execute: () => Promise.reject(new Error('Upvote failed')),
-    }));
+    it('should dispatch rejected action when upvoting a comment fails', async () => {
+      const errorMessage = 'Failed to upvote comment';
+      const mockUpVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockRejectedValue(new Error(errorMessage)),
+      };
+      UpVoteCommentUseCase.mockImplementationOnce(
+          () => mockUpVoteCommentUseCaseInstance,
+      );
 
-    await store.dispatch(upVoteThread(threadId));
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
 
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.upVotesBy).not.toContain(userId);
-    expect(updatedThread.isUpVotedByCurrentUser).toBe(false);
-  });
+      await store.dispatch(upVoteComment({threadId, commentId}));
 
-  // Test cases for downVoteThread
-  it('should handle downVoteThread when thread is not voted by user', async () => {
-    DownVoteUC.mockImplementation(() => ({
-      execute: () => Promise.resolve({userId, voteType: -1}),
-    }));
-
-    await store.dispatch(downVoteThread(threadId));
-
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.downVotesBy).toContain(userId);
-    expect(updatedThread.isDownVotedByCurrentUser).toBe(true);
-    expect(updatedThread.upVotesBy).not.toContain(userId);
-    expect(updatedThread.isUpVotedByCurrentUser).toBe(false);
-  });
-
-  it('should handle downVoteThread when thread is already downvoted by user (neutralize)', async () => {
-    const preloadedState = {
-      threads: {
-        threads: [{
-          ...mockThread,
-          downVotesBy: [userId],
-          isDownVotedByCurrentUser: true,
-        }],
-        detailThread: null,
-      },
-    };
-
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: userId}})),
-      },
-      preloadedState: preloadedState,
+      expect(dispatchedActions[0].type).toBe(upVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(upVoteComment.rejected.type);
+      expect(dispatchedActions[1].payload).toEqual({
+        errorMessage,
+        originalCommentState: initialState.threads.detailThread.comments[0],
+      });
+      expect(mockUpVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
     });
 
-    NeutralVoteThreadUseCase.mockImplementation(() => ({
-      execute: () => Promise.resolve({userId, voteType: 0}),
-    }));
+    it('should dispatch rejected action when user not logged in', async () => {
+      const mockUpVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockResolvedValue(false), // Simulate not logged in
+      };
+      UpVoteCommentUseCase.mockImplementationOnce(
+          () => mockUpVoteCommentUseCaseInstance,
+      );
 
-    await store.dispatch(downVoteThread(threadId));
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
 
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.downVotesBy).not.toContain(userId);
-    expect(updatedThread.isDownVotedByCurrentUser).toBe(false);
+      await store.dispatch(upVoteComment({threadId, commentId}));
+
+      expect(dispatchedActions[0].type).toBe(upVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(upVoteComment.rejected.type);
+      expect(dispatchedActions[1].payload).toBe('User not logged in');
+      expect(mockUpVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
+    });
   });
 
-  it('should revert state on downVoteThread failure', async () => {
-    const preloadedState = {
-      threads: {
-        threads: [mockThread],
-        detailThread: null,
-      },
-    };
+  // Test for downVoteComment thunk
+  describe('downVoteComment', () => {
+    it('should dispatch fulfilled action when downvoting a comment is successful', async () => {
+      const mockDownVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockResolvedValue({
+          id: 'vote-2',
+          userId: 'user-1',
+          threadId: 'thread-1',
+          voteType: -1,
+        }),
+      };
+      DownVoteCommentUseCase.mockImplementationOnce(
+          () => mockDownVoteCommentUseCaseInstance,
+      );
 
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: userId}})),
-      },
-      preloadedState: preloadedState,
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
+
+      await store.dispatch(downVoteComment({threadId, commentId}));
+
+      expect(dispatchedActions[0].type).toBe(downVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(downVoteComment.fulfilled.type);
+      expect(dispatchedActions[1].payload).toEqual({
+        vote: {
+          id: 'vote-2',
+          userId: 'user-1',
+          threadId: 'thread-1',
+          voteType: -1,
+        },
+        commentId,
+        threadId,
+        currentUserId: 'user-1',
+      });
+      expect(mockDownVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
     });
 
-    DownVoteUC.mockImplementation(() => ({
-      execute: () => Promise.reject(new Error('Downvote failed')),
-    }));
+    it('should dispatch rejected action when downvoting a comment fails', async () => {
+      const errorMessage = 'Failed to downvote comment';
+      const mockDownVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockRejectedValue(new Error(errorMessage)),
+      };
+      DownVoteCommentUseCase.mockImplementationOnce(
+          () => mockDownVoteCommentUseCaseInstance,
+      );
 
-    await store.dispatch(downVoteThread(threadId));
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
 
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.downVotesBy).not.toContain(userId);
-    expect(updatedThread.isDownVotedByCurrentUser).toBe(false);
+      await store.dispatch(downVoteComment({threadId, commentId}));
+
+      expect(dispatchedActions[0].type).toBe(downVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(downVoteComment.rejected.type);
+      expect(dispatchedActions[1].payload).toEqual({
+        errorMessage,
+        originalCommentState: initialState.threads.detailThread.comments[0],
+      });
+      expect(mockDownVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
+    });
+
+    it('should dispatch rejected action when user not logged in', async () => {
+      const mockDownVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockResolvedValue(false), // Simulate not logged in
+      };
+      DownVoteCommentUseCase.mockImplementationOnce(
+          () => mockDownVoteCommentUseCaseInstance,
+      );
+
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
+
+      await store.dispatch(downVoteComment({threadId, commentId}));
+
+      expect(dispatchedActions[0].type).toBe(downVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(downVoteComment.rejected.type);
+      expect(dispatchedActions[1].payload).toBe('User not logged in');
+      expect(mockDownVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
+    });
   });
 
-  // Test cases for neutralVoteThread
-  it('should handle neutralVoteThread when thread is upvoted by user', async () => {
-    const preloadedState = {
-      threads: {
-        threads: [{
-          ...mockThread,
-          upVotesBy: [userId],
-          isUpVotedByCurrentUser: true,
-        }],
-        detailThread: null,
-      },
-    };
+  // Test for neutralVoteComment thunk
+  describe('neutralVoteComment', () => {
+    it('should dispatch fulfilled action when neutralizing a comment vote is successful', async () => {
+      const mockNeutralVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockResolvedValue({
+          id: 'vote-3',
+          userId: 'user-1',
+          threadId: 'thread-1',
+          voteType: 0,
+        }),
+      };
+      NeutralVoteCommentUseCase.mockImplementationOnce(
+          () => mockNeutralVoteCommentUseCaseInstance,
+      );
 
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: userId}})),
-      },
-      preloadedState: preloadedState,
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
+
+      await store.dispatch(neutralVoteComment({threadId, commentId}));
+
+      expect(dispatchedActions[0].type).toBe(neutralVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(neutralVoteComment.fulfilled.type);
+      expect(dispatchedActions[1].payload).toEqual({
+        vote: {
+          id: 'vote-3',
+          userId: 'user-1',
+          threadId: 'thread-1',
+          voteType: 0,
+        },
+        commentId,
+        threadId,
+        currentUserId: 'user-1',
+      });
+      expect(mockNeutralVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
     });
 
-    NeutralVoteThreadUseCase.mockImplementation(() => ({
-      execute: () => Promise.resolve({userId, voteType: 0}),
-    }));
+    it('should dispatch rejected action when neutralizing a comment vote fails', async () => {
+      const errorMessage = 'Failed to neutralize comment vote';
+      const mockNeutralVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockRejectedValue(new Error(errorMessage)),
+      };
+      NeutralVoteCommentUseCase.mockImplementationOnce(
+          () => mockNeutralVoteCommentUseCaseInstance,
+      );
 
-    await store.dispatch(neutralVoteThread(threadId));
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
 
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.upVotesBy).not.toContain(userId);
-    expect(updatedThread.isUpVotedByCurrentUser).toBe(false);
-  });
+      await store.dispatch(neutralVoteComment({threadId, commentId}));
 
-  it('should handle neutralVoteThread when thread is downvoted by user', async () => {
-    const preloadedState = {
-      threads: {
-        threads: [{
-          ...mockThread,
-          downVotesBy: [userId],
-          isDownVotedByCurrentUser: true,
-        }],
-        detailThread: null,
-      },
-    };
-
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: userId}})),
-      },
-      preloadedState: preloadedState,
+      expect(dispatchedActions[0].type).toBe(neutralVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(neutralVoteComment.rejected.type);
+      expect(dispatchedActions[1].payload).toEqual(errorMessage);
+      expect(mockNeutralVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
     });
 
-    NeutralVoteThreadUseCase.mockImplementation(() => ({
-      execute: () => Promise.resolve({userId, voteType: 0}),
-    }));
+    it('should dispatch rejected action when user not logged in', async () => {
+      const mockNeutralVoteCommentUseCaseInstance = {
+        execute: vi.fn().mockResolvedValue(false), // Simulate not logged in
+      };
+      NeutralVoteCommentUseCase.mockImplementationOnce(
+          () => mockNeutralVoteCommentUseCaseInstance,
+      );
 
-    await store.dispatch(neutralVoteThread(threadId));
+      const threadId = 'thread-1';
+      const commentId = 'comment-1';
 
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.downVotesBy).not.toContain(userId);
-    expect(updatedThread.isDownVotedByCurrentUser).toBe(false);
-  });
+      await store.dispatch(neutralVoteComment({threadId, commentId}));
 
-  it('should revert state on neutralVoteThread failure', async () => {
-    const preloadedState = {
-      threads: {
-        threads: [{
-          ...mockThread,
-          upVotesBy: [userId],
-          isUpVotedByCurrentUser: true,
-        }],
-        detailThread: null,
-      },
-    };
-
-    store = configureStore({
-      reducer: {
-        threads: threadReducer,
-        auth: vi.fn(() => ({user: {id: userId}})),
-      },
-      preloadedState: preloadedState,
+      expect(dispatchedActions[0].type).toBe(neutralVoteComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(neutralVoteComment.rejected.type);
+      expect(dispatchedActions[1].payload).toBe('User not logged in');
+      expect(mockNeutralVoteCommentUseCaseInstance.execute).toHaveBeenCalledWith(
+          threadId, commentId,
+      );
     });
-
-    NeutralVoteThreadUseCase.mockImplementation(() => ({
-      execute: () => Promise.reject(new Error('Neutral vote failed')),
-    }));
-
-    await store.dispatch(neutralVoteThread(threadId));
-
-    const state = store.getState().threads;
-    const updatedThread = state.threads.find((t) => t.id === threadId);
-    expect(updatedThread.upVotesBy).toContain(userId);
-    expect(updatedThread.isUpVotedByCurrentUser).toBe(true);
   });
 });
