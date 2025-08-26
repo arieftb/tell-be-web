@@ -135,6 +135,11 @@ export const downVoteThread = createAsyncThunk(
 export const neutralVoteThread = createAsyncThunk(
     'threads/neutralVoteThread',
     async (threadId, {rejectWithValue, getState}) => {
+      const {threads, detailThread} = getState().threads;
+      const thread = threads.find((t) => t.id === threadId) ||
+        (detailThread && detailThread.id === threadId ? detailThread : null);
+      const originalThreadState = JSON.parse(JSON.stringify(thread)); // Deep copy
+
       try {
         const neutralVoteThreadUseCase = new NeutralVoteThreadUseCase();
         const vote = await neutralVoteThreadUseCase.execute(threadId);
@@ -142,7 +147,7 @@ export const neutralVoteThread = createAsyncThunk(
         return {vote, threadId, currentUserId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to neutral-vote thread';
-        return rejectWithValue(errorMessage);
+        return rejectWithValue({errorMessage, originalThreadState});
       }
     },
 );
@@ -585,50 +590,17 @@ const threadSlice = createSlice({
         })
         .addCase(neutralVoteThread.rejected, (state, action) => {
           const {threadId} = action.meta.arg;
-          const currentUserId = action.meta.arg.currentUserId;
+          const {originalThreadState} = action.payload;
 
           state.threads = state.threads.map((thread) => {
             if (thread.id === threadId) {
-              // Revert to previous state based on currentUserId
-              // This is a simplified revert, assuming the user was either upvoted or downvoted before
-              const originalUpVoted = thread.upVotesBy.includes(currentUserId);
-              const originalDownVoted = thread.downVotesBy.includes(currentUserId);
-
-              let newUpVotesBy = thread.upVotesBy.filter((id) => id !== currentUserId);
-              let newDownVotesBy = thread.downVotesBy.filter((id) => id !== currentUserId);
-
-              if (originalUpVoted) {
-                newUpVotesBy = [...newUpVotesBy, currentUserId];
-              } else if (originalDownVoted) {
-                newDownVotesBy = [...newDownVotesBy, currentUserId];
-              }
-
-              return {
-                ...thread,
-                upVotesBy: newUpVotesBy,
-                downVotesBy: newDownVotesBy,
-                isUpVotedByCurrentUser: originalUpVoted,
-                isDownVotedByCurrentUser: originalDownVoted,
-              };
+              return originalThreadState;
             }
             return thread;
           });
 
           if (state.detailThread && state.detailThread.id === threadId) {
-            const newUpVotesBy = state.detailThread.upVotesBy.filter((id) => id !== currentUserId);
-            const newDownVotesBy = state.detailThread.downVotesBy.filter((id) => id !== currentUserId);
-
-            state.detailThread = {
-              ...state.detailThread,
-              upVotesBy: newUpVotesBy,
-              downVotesBy: newDownVotesBy,
-              isUpVotedByCurrentUser: newUpVotesBy.includes(
-                  currentUserId,
-              ),
-              isDownVotedByCurrentUser: newDownVotesBy.includes(
-                  currentUserId,
-              ),
-            };
+            state.detailThread = originalThreadState;
           }
         })
         .addCase(neutralVoteThread.fulfilled, (state, action) => {
