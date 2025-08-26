@@ -155,6 +155,10 @@ export const neutralVoteThread = createAsyncThunk(
 export const upVoteComment = createAsyncThunk(
     'threads/upVoteComment',
     async ({threadId, commentId}, {rejectWithValue, getState}) => {
+      const {detailThread} = getState().threads;
+      const comment = detailThread.comments.find((c) => c.id === commentId);
+      const originalCommentState = JSON.parse(JSON.stringify(comment));
+
       try {
         const upVoteCommentUseCase = new UpVoteCommentUseCase();
         const result = await upVoteCommentUseCase.execute(threadId, commentId);
@@ -172,7 +176,7 @@ export const upVoteComment = createAsyncThunk(
         return {vote: serializableVote, commentId, threadId, currentUserId};
       } catch (error) {
         const errorMessage = error.message || 'Failed to up-vote comment';
-        return rejectWithValue(errorMessage);
+        return rejectWithValue({errorMessage, originalCommentState});
       }
     },
 );
@@ -669,21 +673,14 @@ const threadSlice = createSlice({
           }
         })
         .addCase(upVoteComment.rejected, (state, action) => {
-          const {threadId, commentId, currentUserId} = action.meta.arg;
+          const {threadId, commentId} = action.meta.arg;
+          const {originalCommentState} = action.payload;
           if (state.detailThread && state.detailThread.id === threadId) {
             state.detailThread = {
               ...state.detailThread,
               comments: state.detailThread.comments.map((comment) => {
                 if (comment.id === commentId) {
-                  const newUpVotesBy = comment.upVotesBy.filter((id) => id !== currentUserId);
-                  const newDownVotesBy = comment.downVotesBy.filter((id) => id !== currentUserId);
-                  return {
-                    ...comment,
-                    upVotesBy: newUpVotesBy,
-                    downVotesBy: newDownVotesBy,
-                    isUpVotedByCurrentUser: false,
-                    isDownVotedByCurrentUser: false,
-                  };
+                  return originalCommentState;
                 }
                 return comment;
               }),
