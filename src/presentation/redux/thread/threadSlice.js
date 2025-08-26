@@ -691,10 +691,38 @@ const threadSlice = createSlice({
             };
           }
         })
-        .addCase(upVoteComment.fulfilled, () => {
-          // The optimistic update in pending case already handled the state change.
-          // This fulfilled case can be used for any final consistency checks if needed.
-          // No explicit state modification needed here unless backend response dictates a different state.
+        .addCase(upVoteComment.fulfilled, (state, action) => {
+          const {vote, commentId, threadId} = action.payload;
+          const {userId} = vote;
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newUpVotesBy = comment.upVotesBy.includes(userId) ?
+                    comment.upVotesBy.filter((id) => id !== userId) :
+                    [...comment.upVotesBy, userId];
+                  const newDownVotesBy = comment.downVotesBy.filter(
+                      (id) => id !== userId,
+                  );
+
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: newUpVotesBy.includes(
+                        userId,
+                    ),
+                    isDownVotedByCurrentUser: newDownVotesBy.includes(
+                        userId,
+                    ),
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
         })
         .addCase(downVoteComment.pending, (state, action) => {
           const {threadId, commentId, currentUserId} = action.meta.arg;
@@ -735,10 +763,38 @@ const threadSlice = createSlice({
             };
           }
         })
-        .addCase(downVoteComment.fulfilled, () => {
-          // The optimistic update in pending case already handled the state change.
-          // This fulfilled case can be used for any final consistency checks if needed.
-          // No explicit state modification needed here unless backend response dictates a different state.
+        .addCase(downVoteComment.fulfilled, (state, action) => {
+          const {vote, commentId, threadId} = action.payload;
+          const {userId} = vote;
+
+          if (state.detailThread && state.detailThread.id === threadId) {
+            state.detailThread = {
+              ...state.detailThread,
+              comments: state.detailThread.comments.map((comment) => {
+                if (comment.id === commentId) {
+                  const newDownVotesBy = comment.downVotesBy.includes(userId) ?
+                    comment.downVotesBy.filter((id) => id !== userId) :
+                    [...comment.downVotesBy, userId];
+                  const newUpVotesBy = comment.upVotesBy.filter(
+                      (id) => id !== userId,
+                  );
+
+                  return {
+                    ...comment,
+                    upVotesBy: newUpVotesBy,
+                    downVotesBy: newDownVotesBy,
+                    isUpVotedByCurrentUser: newUpVotesBy.includes(
+                        userId,
+                    ),
+                    isDownVotedByCurrentUser: newDownVotesBy.includes(
+                        userId,
+                    ),
+                  };
+                }
+                return comment;
+              }),
+            };
+          }
         })
         .addCase(neutralVoteComment.pending, (state, action) => {
           const {threadId, commentId, currentUserId} = action.meta.arg;

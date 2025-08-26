@@ -2,6 +2,7 @@ import threadReducer, {
   fetchThreads,
   fetchThreadDetail,
   submitThread,
+  submitComment,
   upVoteThread,
   downVoteThread,
   neutralVoteThread,
@@ -122,6 +123,40 @@ describe('threadSlice', () => {
       const actual = threadReducer(initialState, action);
       expect(actual.submitThreadStatus).toEqual('failed');
       expect(actual.submitThreadError).toEqual(error);
+    });
+  });
+
+  describe('submitComment extra reducers', () => {
+    const comment = {id: 'comment-2', content: 'New Comment'};
+
+    it('should handle submitComment.pending', () => {
+      const actual = threadReducer(initialState, submitComment.pending());
+      expect(actual.submitCommentStatus).toEqual('loading');
+    });
+
+    it('should handle submitComment.fulfilled', () => {
+      const stateWithDetailThread = {
+        ...initialState,
+        detailThread: {
+          id: 'thread-1',
+          comments: [],
+        },
+      };
+      const actual = threadReducer(
+          stateWithDetailThread,
+          submitComment.fulfilled(comment),
+      );
+      expect(actual.submitCommentStatus).toEqual('succeeded');
+      expect(actual.detailThread.comments).toEqual([comment]);
+      expect(actual.submitCommentError).toBeNull();
+    });
+
+    it('should handle submitComment.rejected', () => {
+      const error = 'Failed to submit comment';
+      const action = {type: submitComment.rejected.type, payload: error};
+      const actual = threadReducer(initialState, action);
+      expect(actual.submitCommentStatus).toEqual('failed');
+      expect(actual.submitCommentError).toEqual(error);
     });
   });
 
@@ -367,6 +402,18 @@ describe('threadSlice', () => {
       expect(comment.upVotesBy).toContain(currentUserId);
     });
 
+    it('should handle upVoteComment.fulfilled', () => {
+      const vote = {userId: currentUserId};
+      const action = {
+        type: upVoteComment.fulfilled.type,
+        payload: {vote, threadId, commentId},
+      };
+      const actual = threadReducer(initialStateWithComment, action);
+      const comment = actual.detailThread.comments.find((c) => c.id === commentId);
+      expect(comment.isUpVotedByCurrentUser).toBe(true);
+      expect(comment.upVotesBy).toContain(currentUserId);
+    });
+
     it('should handle upVoteComment.rejected and revert state', () => {
       const stateAfterPending = {
         ...initialState,
@@ -420,6 +467,18 @@ describe('threadSlice', () => {
       const action = {
         type: downVoteComment.pending.type,
         meta: {arg: {threadId, commentId, currentUserId}},
+      };
+      const actual = threadReducer(initialStateWithComment, action);
+      const comment = actual.detailThread.comments.find((c) => c.id === commentId);
+      expect(comment.isDownVotedByCurrentUser).toBe(true);
+      expect(comment.downVotesBy).toContain(currentUserId);
+    });
+
+    it('should handle downVoteComment.fulfilled', () => {
+      const vote = {userId: currentUserId};
+      const action = {
+        type: downVoteComment.fulfilled.type,
+        payload: {vote, threadId, commentId},
       };
       const actual = threadReducer(initialStateWithComment, action);
       const comment = actual.detailThread.comments.find((c) => c.id === commentId);
@@ -529,7 +588,7 @@ describe('threadSlice', () => {
       expect(comment.upVotesBy).toContain(currentUserId);
     });
 
-    it('should handle neutralVoteComment.rejected when downvoted', () => {
+    it('should handle neutralVoteComment.rejected when downvoted and revert state', () => {
       const action = {
         type: neutralVoteComment.rejected.type,
         meta: {arg: {threadId, commentId, currentUserId}},
