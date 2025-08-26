@@ -3,18 +3,30 @@ import {
   upVoteComment,
   downVoteComment,
   neutralVoteComment,
+  fetchThreads,
+  fetchThreadDetail,
 } from './threadSlice';
 import {UpVoteCommentUseCase} from '../../../application/thread/UpVoteCommentUseCase';
 import {DownVoteCommentUseCase} from '../../../application/thread/DownVoteCommentUseCase';
 import {NeutralVoteCommentUseCase} from '../../../application/thread/NeutralVoteCommentUseCase';
+import AllThreadsUseCase from '../../../application/thread/GetAllThreadsUseCase';
+import ThreadDetailUseCase from '../../../application/thread/GetThreadDetailUseCase';
 import {vi} from 'vitest';
 
 // Mock the use cases
 vi.mock('../../../application/thread/UpVoteCommentUseCase');
 vi.mock('../../../application/thread/DownVoteCommentUseCase');
 vi.mock('../../../application/thread/NeutralVoteCommentUseCase');
+vi.mock('../../../application/thread/GetAllThreadsUseCase');
 
-describe('Thread Comment Vote Thunks', () => {
+const mockThreadDetailUseCaseExecute = vi.fn();
+vi.mock('../../../application/thread/GetThreadDetailUseCase', () => ({
+  default: vi.fn(() => ({
+    execute: mockThreadDetailUseCaseExecute,
+  })),
+}));
+
+describe('Thread Thunks', () => {
   let store;
   let initialState;
   let dispatchedActions; // To store dispatched actions
@@ -57,6 +69,74 @@ describe('Thread Comment Vote Thunks', () => {
     UpVoteCommentUseCase.mockClear();
     DownVoteCommentUseCase.mockClear();
     NeutralVoteCommentUseCase.mockClear();
+    AllThreadsUseCase.mockClear();
+    mockThreadDetailUseCaseExecute.mockClear(); // Clear the execute mock
+    ThreadDetailUseCase.mockClear(); // Clear the constructor mock
+  });
+
+  // Test for fetchThreads thunk
+  describe('fetchThreads', () => {
+    it('should dispatch fulfilled action when fetching threads is successful', async () => {
+      const mockThreads = [
+        {id: 'thread-1', title: 'Thread 1', category: 'react'},
+        {id: 'thread-2', title: 'Thread 2', category: 'javascript'},
+      ];
+      AllThreadsUseCase.mockImplementationOnce(() => ({
+        execute: vi.fn().mockResolvedValue(mockThreads),
+      }));
+
+      await store.dispatch(fetchThreads());
+
+      expect(dispatchedActions[0].type).toBe(fetchThreads.pending.type);
+      expect(dispatchedActions[1].type).toBe(fetchThreads.fulfilled.type);
+      expect(dispatchedActions[1].payload).toEqual(mockThreads);
+      expect(AllThreadsUseCase).toHaveBeenCalledTimes(1);
+    });
+
+    it('should dispatch rejected action when fetching threads fails', async () => {
+      const errorMessage = 'Failed to fetch threads';
+      AllThreadsUseCase.mockImplementationOnce(() => ({
+        execute: vi.fn().mockRejectedValue(new Error(errorMessage)),
+      }));
+
+      await store.dispatch(fetchThreads());
+
+      expect(dispatchedActions[0].type).toBe(fetchThreads.pending.type);
+      expect(dispatchedActions[1].type).toBe(fetchThreads.rejected.type);
+      expect(dispatchedActions[1].payload).toEqual(errorMessage);
+      expect(AllThreadsUseCase).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // Test for fetchThreadDetail thunk
+  describe('fetchThreadDetail', () => {
+    it('should dispatch fulfilled action when fetching thread detail is successful', async () => {
+      const threadId = 'thread-1';
+      const mockThreadDetail = {id: threadId, title: 'Detail Thread', body: 'Body'};
+      mockThreadDetailUseCaseExecute.mockResolvedValue(mockThreadDetail);
+
+      await store.dispatch(fetchThreadDetail(threadId));
+
+      expect(dispatchedActions[0].type).toBe(fetchThreadDetail.pending.type);
+      expect(dispatchedActions[1].type).toBe(fetchThreadDetail.fulfilled.type);
+      expect(dispatchedActions[1].payload).toEqual(mockThreadDetail);
+      expect(ThreadDetailUseCase).toHaveBeenCalledTimes(1);
+      expect(mockThreadDetailUseCaseExecute).toHaveBeenCalledWith(threadId);
+    });
+
+    it('should dispatch rejected action when fetching thread detail fails', async () => {
+      const threadId = 'thread-1';
+      const errorMessage = 'Failed to fetch thread detail';
+      mockThreadDetailUseCaseExecute.mockRejectedValue(new Error(errorMessage));
+
+      await store.dispatch(fetchThreadDetail(threadId));
+
+      expect(dispatchedActions[0].type).toBe(fetchThreadDetail.pending.type);
+      expect(dispatchedActions[1].type).toBe(fetchThreadDetail.rejected.type);
+      expect(dispatchedActions[1].payload).toEqual(errorMessage);
+      expect(ThreadDetailUseCase).toHaveBeenCalledTimes(1);
+      expect(mockThreadDetailUseCaseExecute).toHaveBeenCalledWith(threadId);
+    });
   });
 
   // Test for upVoteComment thunk
