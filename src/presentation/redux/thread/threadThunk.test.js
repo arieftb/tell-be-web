@@ -1,14 +1,20 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {vi} from 'vitest';
-import threadReducer, {fetchThreads, fetchThreadDetail, submitComment} from './threadSlice';
+import threadReducer, {fetchThreads, fetchThreadDetail, submitComment, submitThread} from './threadSlice';
 import AllThreadsUseCase from '../../../application/thread/GetAllThreadsUseCase';
 import ThreadDetailUseCase from '../../../application/thread/GetThreadDetailUseCase';
 import CommentUseCase from '../../../application/thread/SubmitCommentUseCase';
+import {SubmitThreadUseCase} from '../../../application/thread/SubmitThreadUseCase';
+import {ThreadRepository} from '../../../data/persistence/thread/ThreadRepository';
+import {AuthRepository} from '../../../data/persistence/auth/AuthRepository';
 
 // Mock the AllThreadsUseCase
 vi.mock('../../../application/thread/GetAllThreadsUseCase');
 vi.mock('../../../application/thread/GetThreadDetailUseCase');
 vi.mock('../../../application/thread/SubmitCommentUseCase');
+vi.mock('../../../application/thread/SubmitThreadUseCase');
+vi.mock('../../../data/persistence/thread/ThreadRepository');
+vi.mock('../../../data/persistence/auth/AuthRepository');
 
 describe('fetchThreads thunk', () => {
   let store;
@@ -181,5 +187,61 @@ describe('submitComment thunk', () => {
     const state = store.getState().threads;
     expect(state.submitCommentStatus).toBe('failed');
     expect(state.submitCommentError).toBe(errorMessage);
+  });
+});
+
+describe('submitThread thunk', () => {
+  let store;
+
+  beforeEach(() => {
+    store = configureStore({
+      reducer: {
+        threads: threadReducer,
+      },
+    });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should handle successful thread submission and update state correctly', async () => {
+    // Given: Valid thread data
+    const threadData = {title: 'New Thread', body: 'Thread Body', category: 'General'};
+    SubmitThreadUseCase.mockImplementation(() => ({
+      execute: (data) => {
+        if (data.title === threadData.title && data.body === threadData.body) {
+          return Promise.resolve(); // No return value expected for successful submission
+        }
+        return Promise.reject(new Error('Invalid thread data'));
+      },
+    }));
+
+    // When: submitThread(threadData) is dispatched
+    await store.dispatch(submitThread(threadData));
+
+    // Then: state.submitThreadStatus = 'succeeded', state.status = 'idle', state.submitThreadError = null
+    const state = store.getState().threads;
+    expect(state.submitThreadStatus).toBe('succeeded');
+    expect(state.status).toBe('idle');
+    expect(state.submitThreadError).toBeNull();
+  });
+
+  it('should handle failed thread submission and update state correctly', async () => {
+    // Given: Repository or auth throws error
+    const threadData = {title: 'New Thread', body: 'Thread Body', category: 'General'};
+    const errorMessage = 'Failed to submit thread';
+
+    SubmitThreadUseCase.mockImplementation(() => ({
+      execute: () => Promise.reject(new Error(errorMessage)),
+    }));
+
+    // When: submitThread(threadData) is dispatched
+    await store.dispatch(submitThread(threadData));
+
+    // Then: state.submitThreadStatus = 'failed', state.submitThreadError = error message
+    const state = store.getState().threads;
+    expect(state.submitThreadStatus).toBe('failed');
+    expect(state.submitThreadError).toBe(errorMessage);
   });
 });
