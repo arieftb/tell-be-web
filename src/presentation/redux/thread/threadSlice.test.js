@@ -6,7 +6,6 @@ import threadReducer, {
   downVoteThread,
   neutralVoteThread,
   upVoteComment,
-  // eslint-disable-next-line no-unused-vars
   downVoteComment,
   neutralVoteComment,
   setSelectedCategory,
@@ -387,6 +386,66 @@ describe('threadSlice', () => {
 
       const action = {
         type: upVoteComment.rejected.type,
+        payload: {originalCommentState: initialStateWithComment.detailThread.comments[0]},
+        meta: {arg: {threadId, commentId, currentUserId}},
+      };
+
+      const actual = threadReducer(stateAfterPending, action);
+      const comment = actual.detailThread.comments.find((c) => c.id === commentId);
+      expect(comment).toEqual(initialStateWithComment.detailThread.comments[0]);
+    });
+  });
+
+  describe('downVoteComment extra reducers', () => {
+    const threadId = 'thread-1';
+    const commentId = 'comment-1';
+    const currentUserId = 'user-1';
+    const initialStateWithComment = {
+      ...initialState,
+      detailThread: {
+        id: threadId,
+        comments: [
+          {
+            id: commentId,
+            upVotesBy: [],
+            downVotesBy: [],
+            isUpVotedByCurrentUser: false,
+            isDownVotedByCurrentUser: false,
+          },
+        ],
+      },
+    };
+
+    it('should handle downVoteComment.pending', () => {
+      const action = {
+        type: downVoteComment.pending.type,
+        meta: {arg: {threadId, commentId, currentUserId}},
+      };
+      const actual = threadReducer(initialStateWithComment, action);
+      const comment = actual.detailThread.comments.find((c) => c.id === commentId);
+      expect(comment.isDownVotedByCurrentUser).toBe(true);
+      expect(comment.downVotesBy).toContain(currentUserId);
+    });
+
+    it('should handle downVoteComment.rejected and revert state', () => {
+      const stateAfterPending = {
+        ...initialState,
+        detailThread: {
+          id: threadId,
+          comments: [
+            {
+              id: commentId,
+              upVotesBy: [],
+              downVotesBy: [currentUserId],
+              isUpVotedByCurrentUser: false,
+              isDownVotedByCurrentUser: true,
+            },
+          ],
+        },
+      };
+
+      const action = {
+        type: downVoteComment.rejected.type,
         payload: {originalCommentState: initialStateWithComment.detailThread.comments[0]},
         meta: {arg: {threadId, commentId, currentUserId}},
       };
