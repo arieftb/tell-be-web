@@ -6,6 +6,7 @@ import {
   fetchThreads,
   fetchThreadDetail,
   submitThread,
+  submitComment,
 } from './threadSlice';
 import {UpVoteCommentUseCase} from '../../../application/thread/UpVoteCommentUseCase';
 import {DownVoteCommentUseCase} from '../../../application/thread/DownVoteCommentUseCase';
@@ -13,6 +14,7 @@ import {NeutralVoteCommentUseCase} from '../../../application/thread/NeutralVote
 import AllThreadsUseCase from '../../../application/thread/GetAllThreadsUseCase';
 import ThreadDetailUseCase from '../../../application/thread/GetThreadDetailUseCase';
 import {SubmitThreadUseCase} from '../../../application/thread/SubmitThreadUseCase';
+import CommentUseCase from '../../../application/thread/SubmitCommentUseCase';
 import {vi} from 'vitest';
 
 // Mock the use cases
@@ -32,6 +34,13 @@ const mockSubmitThreadUseCaseExecute = vi.fn();
 vi.mock('../../../application/thread/SubmitThreadUseCase', () => ({
   SubmitThreadUseCase: vi.fn(() => ({
     execute: mockSubmitThreadUseCaseExecute,
+  })),
+}));
+
+const mockCommentUseCaseExecute = vi.fn();
+vi.mock('../../../application/thread/SubmitCommentUseCase', () => ({
+  default: vi.fn(() => ({
+    execute: mockCommentUseCaseExecute,
   })),
 }));
 
@@ -83,6 +92,8 @@ describe('Thread Thunks', () => {
     ThreadDetailUseCase.mockClear(); // Clear the constructor mock
     mockSubmitThreadUseCaseExecute.mockClear();
     SubmitThreadUseCase.mockClear();
+    mockCommentUseCaseExecute.mockClear();
+    CommentUseCase.mockClear();
   });
 
   // Test for fetchThreads thunk
@@ -177,6 +188,37 @@ describe('Thread Thunks', () => {
       expect(dispatchedActions[1].payload).toEqual(errorMessage);
       expect(SubmitThreadUseCase).toHaveBeenCalledTimes(1);
       expect(mockSubmitThreadUseCaseExecute).toHaveBeenCalledWith(threadData);
+    });
+  });
+
+  // Test for submitComment thunk
+  describe('submitComment', () => {
+    it('should dispatch fulfilled action when submitting a comment is successful', async () => {
+      const commentData = {threadId: 'thread-1', content: 'New Comment'};
+      const mockComment = {id: 'comment-3', content: 'New Comment', owner: {id: 'user-1'}};
+      mockCommentUseCaseExecute.mockResolvedValue(mockComment);
+
+      await store.dispatch(submitComment(commentData));
+
+      expect(dispatchedActions[0].type).toBe(submitComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(submitComment.fulfilled.type);
+      expect(dispatchedActions[1].payload).toEqual(mockComment);
+      expect(CommentUseCase).toHaveBeenCalledTimes(1);
+      expect(mockCommentUseCaseExecute).toHaveBeenCalledWith(commentData);
+    });
+
+    it('should dispatch rejected action when submitting a comment fails', async () => {
+      const commentData = {threadId: 'thread-1', content: 'New Comment'};
+      const errorMessage = 'Failed to submit comment';
+      mockCommentUseCaseExecute.mockRejectedValue(new Error(errorMessage));
+
+      await store.dispatch(submitComment(commentData));
+
+      expect(dispatchedActions[0].type).toBe(submitComment.pending.type);
+      expect(dispatchedActions[1].type).toBe(submitComment.rejected.type);
+      expect(dispatchedActions[1].payload).toEqual(errorMessage);
+      expect(CommentUseCase).toHaveBeenCalledTimes(1);
+      expect(mockCommentUseCaseExecute).toHaveBeenCalledWith(commentData);
     });
   });
 
