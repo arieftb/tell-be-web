@@ -5,12 +5,14 @@ import {
   neutralVoteComment,
   fetchThreads,
   fetchThreadDetail,
+  submitThread,
 } from './threadSlice';
 import {UpVoteCommentUseCase} from '../../../application/thread/UpVoteCommentUseCase';
 import {DownVoteCommentUseCase} from '../../../application/thread/DownVoteCommentUseCase';
 import {NeutralVoteCommentUseCase} from '../../../application/thread/NeutralVoteCommentUseCase';
 import AllThreadsUseCase from '../../../application/thread/GetAllThreadsUseCase';
 import ThreadDetailUseCase from '../../../application/thread/GetThreadDetailUseCase';
+import {SubmitThreadUseCase} from '../../../application/thread/SubmitThreadUseCase';
 import {vi} from 'vitest';
 
 // Mock the use cases
@@ -23,6 +25,13 @@ const mockThreadDetailUseCaseExecute = vi.fn();
 vi.mock('../../../application/thread/GetThreadDetailUseCase', () => ({
   default: vi.fn(() => ({
     execute: mockThreadDetailUseCaseExecute,
+  })),
+}));
+
+const mockSubmitThreadUseCaseExecute = vi.fn();
+vi.mock('../../../application/thread/SubmitThreadUseCase', () => ({
+  SubmitThreadUseCase: vi.fn(() => ({
+    execute: mockSubmitThreadUseCaseExecute,
   })),
 }));
 
@@ -72,6 +81,8 @@ describe('Thread Thunks', () => {
     AllThreadsUseCase.mockClear();
     mockThreadDetailUseCaseExecute.mockClear(); // Clear the execute mock
     ThreadDetailUseCase.mockClear(); // Clear the constructor mock
+    mockSubmitThreadUseCaseExecute.mockClear();
+    SubmitThreadUseCase.mockClear();
   });
 
   // Test for fetchThreads thunk
@@ -136,6 +147,36 @@ describe('Thread Thunks', () => {
       expect(dispatchedActions[1].payload).toEqual(errorMessage);
       expect(ThreadDetailUseCase).toHaveBeenCalledTimes(1);
       expect(mockThreadDetailUseCaseExecute).toHaveBeenCalledWith(threadId);
+    });
+  });
+
+  // Test for submitThread thunk
+  describe('submitThread', () => {
+    it('should dispatch fulfilled action when submitting a thread is successful', async () => {
+      const threadData = {title: 'New Thread', body: 'Content', category: 'test'};
+      mockSubmitThreadUseCaseExecute.mockResolvedValue(undefined); // submitThreadUseCase.execute returns void
+
+      await store.dispatch(submitThread(threadData));
+
+      expect(dispatchedActions[0].type).toBe(submitThread.pending.type);
+      expect(dispatchedActions[1].type).toBe(submitThread.fulfilled.type);
+      expect(dispatchedActions[1].payload).toBeUndefined();
+      expect(SubmitThreadUseCase).toHaveBeenCalledTimes(1);
+      expect(mockSubmitThreadUseCaseExecute).toHaveBeenCalledWith(threadData);
+    });
+
+    it('should dispatch rejected action when submitting a thread fails', async () => {
+      const threadData = {title: 'New Thread', body: 'Content', category: 'test'};
+      const errorMessage = 'Failed to submit thread';
+      mockSubmitThreadUseCaseExecute.mockRejectedValue(new Error(errorMessage));
+
+      await store.dispatch(submitThread(threadData));
+
+      expect(dispatchedActions[0].type).toBe(submitThread.pending.type);
+      expect(dispatchedActions[1].type).toBe(submitThread.rejected.type);
+      expect(dispatchedActions[1].payload).toEqual(errorMessage);
+      expect(SubmitThreadUseCase).toHaveBeenCalledTimes(1);
+      expect(mockSubmitThreadUseCaseExecute).toHaveBeenCalledWith(threadData);
     });
   });
 
