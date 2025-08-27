@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import {render, screen, cleanup} from '@testing-library/react';
 import {vi} from 'vitest';
 import Avatar from './Avatar';
@@ -99,5 +100,24 @@ describe('Avatar Component', () => {
     const alt = 'Accessible Avatar';
     render(<Avatar src={src} alt={alt} />);
     expect(screen.getByAltText(alt)).toBeInTheDocument();
+  });
+
+
+  it('should validate PropTypes manually for invalid size', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    PropTypes.checkPropTypes(
+      Avatar.propTypes,
+      {src: 'https://example.com/avatar.jpg', alt: 'User Avatar', size: 'xlarge'},
+      'prop',
+      Avatar.name,
+    );
+
+    expect(errorSpy).toHaveBeenCalled();
+    expect(errorSpy.mock.calls[0][0]).toContain(
+      'Invalid prop `size` of value `xlarge` supplied to `Avatar`',
+    );
+
+    errorSpy.mockRestore();
   });
 });
