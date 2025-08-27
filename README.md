@@ -96,6 +96,13 @@ src/
 
 - **Atomic Design** - For organizing UI components
 
+## Testing
+
+This project utilizes Vitest for comprehensive unit testing of Redux thunks and reducers, ensuring the reliability and correctness of state management logic.
+
+- **Thunk Unit Tests**: Dedicated tests are implemented for `fetchThreads`, `fetchThreadDetail`, `submitThread`, `submitComment`, `upVoteThread`, `downVoteThread`, `neutralVoteThread`, `upVoteComment`, `downVoteComment`, and `neutralVoteComment` to verify their dispatching behavior and interactions with use cases.
+- **Reducer Unit Tests**: Extensive tests cover the initial state, direct reducers (`resetSubmitThreadStatus`, `setSelectedCategory`), and the `pending`, `fulfilled`, and `rejected` states of all thunks, ensuring proper state updates.
+
 ## Technologies Used
 
 - **React** - UI library (`^19.1.0`)
@@ -108,6 +115,7 @@ src/
 - **ESLint** - For code linting and maintaining code quality, ensuring consistent code style and catching potential errors early in the development process. (`^9.30.1`)
 - **React Icons** - For various icons (`^5.5.0`)
 - **Zod** - For schema validation (`^4.0.17`)
+- **Vitest** - For unit testing (`^3.2.4`)
 
 ## License
 
