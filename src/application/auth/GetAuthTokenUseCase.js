@@ -1,4 +1,4 @@
-import {AuthRepository} from '../../data/persistence/auth/AuthRepository.js';
+import { AuthRepository } from "../../data/persistence/auth/AuthRepository.js";
 
 export default class GetAuthTokenUseCase {
   constructor() {

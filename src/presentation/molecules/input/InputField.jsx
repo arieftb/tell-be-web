@@ -1,7 +1,7 @@
-import {SmallText} from '../../atoms/text/Text.jsx';
-import PropTypes from 'prop-types';
-import Input from '../../atoms/input/Input.jsx';
-import styles from './InputField.module.css';
+import { SmallText } from "../../atoms/text/Text.jsx";
+import PropTypes from "prop-types";
+import Input from "../../atoms/input/Input.jsx";
+import styles from "./InputField.module.css";
 
 const InputField = ({
   id,
@@ -10,17 +10,17 @@ const InputField = ({
   placeholder,
   onChange,
   errorMessage,
-  type = 'text',
+  type = "text",
   error = false,
   required = false,
   maxLength = 255,
   minLength = 0,
-  value = '',
+  value = "",
   inputMode,
   multiline = false,
   rows = 3,
 }) => {
-  const errorText = error ? errorMessage : '';
+  const errorText = error ? errorMessage : "";
 
   const handleOnChange = (newValue) => {
     onChange(newValue);
@@ -45,9 +45,7 @@ const InputField = ({
         multiline={multiline}
         rows={rows}
       />
-      {errorText && (
-        <SmallText className={styles.error}>{errorText}</SmallText>
-      )}
+      {errorText && <SmallText className={styles.error}>{errorText}</SmallText>}
     </div>
   );
 };
@@ -72,14 +70,14 @@ InputField.propTypes = {
 
 InputField.defaultProps = {
   disabled: false,
-  placeholder: '',
+  placeholder: "",
   error: false,
-  errorMessage: '',
+  errorMessage: "",
   required: false,
   maxLength: 255,
   minLength: 0,
-  type: 'text',
-  value: '',
+  type: "text",
+  value: "",
   inputMode: undefined,
   multiline: false,
   rows: 3,

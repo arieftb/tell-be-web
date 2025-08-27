@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {Link} from 'react-router-dom';
+import React from "react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
-function NavigationItem({to, children, onClick}) {
+function NavigationItem({ to, children, onClick }) {
   return (
     <li>
       <Link to={to} onClick={onClick}>

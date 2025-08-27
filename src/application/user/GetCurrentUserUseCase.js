@@ -1,4 +1,4 @@
-import {UserRepository} from '../../data/persistence/user/UserRepository.js';
+import { UserRepository } from "../../data/persistence/user/UserRepository.js";
 
 export class GetCurrentUserUseCase {
   constructor() {

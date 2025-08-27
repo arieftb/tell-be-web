@@ -1,17 +1,22 @@
-import {H4} from '../../atoms/text/Heading.jsx';
-import styles from './SignUpForm.module.css';
-import TextInputField from '../../molecules/input/TextInputField.jsx';
-import EmailInputField from '../../molecules/input/EmailInputField.jsx';
-import PasswordInputField from '../../molecules/input/PasswordInputField.jsx';
-import Button from '../../atoms/button/Button.jsx';
-import {useState} from 'react';
-import {SmallText} from '../../atoms/text/Text.jsx';
+import { H4 } from "../../atoms/text/Heading.jsx";
+import styles from "./SignUpForm.module.css";
+import TextInputField from "../../molecules/input/TextInputField.jsx";
+import EmailInputField from "../../molecules/input/EmailInputField.jsx";
+import PasswordInputField from "../../molecules/input/PasswordInputField.jsx";
+import Button from "../../atoms/button/Button.jsx";
+import { useState } from "react";
+import { SmallText } from "../../atoms/text/Text.jsx";
 
-const SignUpForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
+const SignUpForm = ({
+  onSubmit,
+  isSubmitting,
+  successMessage,
+  errorMessage,
+}) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
+    name: "",
+    email: "",
+    password: "",
   });
   const [formErrors, setFormErrors] = useState({
     name: false,
@@ -36,7 +41,7 @@ const SignUpForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
 
   const validateForm = () => {
     let valid = true;
-    const newErrors = {...formErrors};
+    const newErrors = { ...formErrors };
 
     // Validate name
     if (!formData.name.trim()) {
@@ -49,7 +54,8 @@ const SignUpForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
       newErrors.email = true;
       valid = false;
     } else {
-      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,6}$/;
+      const emailRegex =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,6}$/;
       if (!emailRegex.test(formData.email)) {
         newErrors.email = true;
         valid = false;
@@ -82,21 +88,17 @@ const SignUpForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
       <H4 className={styles.title}>Sign Up</H4>
       <form className={styles.form} onSubmit={handleSubmit}>
         {successMessage && (
-          <div className={styles.successMessage}>
-            {successMessage}
-          </div>
+          <div className={styles.successMessage}>{successMessage}</div>
         )}
         {errorMessage && (
-          <div className={styles.errorMessage}>
-            {errorMessage}
-          </div>
+          <div className={styles.errorMessage}>{errorMessage}</div>
         )}
         <section className={styles.form}>
           <TextInputField
             id="name"
             label="Name"
             placeholder="Name"
-            onChange={handleInputChange('name')}
+            onChange={handleInputChange("name")}
             value={formData.name}
             required
           />
@@ -104,7 +106,7 @@ const SignUpForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
             id="email"
             label="Email"
             placeholder="Email"
-            onChange={handleInputChange('email')}
+            onChange={handleInputChange("email")}
             value={formData.email}
             required
           />
@@ -112,7 +114,7 @@ const SignUpForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
             id="password"
             label="Password"
             placeholder="Password"
-            onChange={handleInputChange('password')}
+            onChange={handleInputChange("password")}
             value={formData.password}
             validateStrength
             required
@@ -123,7 +125,7 @@ const SignUpForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Registering...' : 'Register'}
+            {isSubmitting ? "Registering..." : "Register"}
           </Button>
         </section>
       </form>

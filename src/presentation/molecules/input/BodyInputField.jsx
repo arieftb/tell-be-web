@@ -1,52 +1,58 @@
-import InputField from './InputField.jsx';
-import PropTypes from 'prop-types';
-import {useCallback, useEffect, useState} from 'react';
+import InputField from "./InputField.jsx";
+import PropTypes from "prop-types";
+import { useCallback, useEffect, useState } from "react";
 
 const BodyInputField = ({
   id,
-  label = 'Body',
+  label = "Body",
   placeholder,
   onChange,
   disabled = false,
   required = false,
   maxLength = 1000,
   minLength = 1,
-  value = '',
+  value = "",
   rows = 5,
 }) => {
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const validateBody = useCallback((body) => {
-    const valueToValidate = body || '';
+  const validateBody = useCallback(
+    (body) => {
+      const valueToValidate = body || "";
 
-    if (required && !valueToValidate.trim()) {
-      setError(true);
-      setErrorMessage(`${label} is required`);
-      return false;
-    }
+      if (required && !valueToValidate.trim()) {
+        setError(true);
+        setErrorMessage(`${label} is required`);
+        return false;
+      }
 
-    if (valueToValidate.length > 0 && valueToValidate.length < minLength) {
-      setError(true);
-      setErrorMessage(`${label} must be at least ${minLength} characters`);
-      return false;
-    }
+      if (valueToValidate.length > 0 && valueToValidate.length < minLength) {
+        setError(true);
+        setErrorMessage(`${label} must be at least ${minLength} characters`);
+        return false;
+      }
 
-    if (valueToValidate.length > maxLength) {
-      setError(true);
-      setErrorMessage(`${label} must be less than ${maxLength} characters`);
-      return false;
-    }
+      if (valueToValidate.length > maxLength) {
+        setError(true);
+        setErrorMessage(`${label} must be less than ${maxLength} characters`);
+        return false;
+      }
 
-    setError(false);
-    setErrorMessage('');
-    return true;
-  }, [minLength, maxLength, required, label]);
+      setError(false);
+      setErrorMessage("");
+      return true;
+    },
+    [minLength, maxLength, required, label],
+  );
 
-  const handleChange = useCallback((newValue) => {
-    validateBody(newValue);
-    onChange(newValue);
-  }, [onChange, validateBody]);
+  const handleChange = useCallback(
+    (newValue) => {
+      validateBody(newValue);
+      onChange(newValue);
+    },
+    [onChange, validateBody],
+  );
 
   useEffect(() => {
     if (value) {
@@ -87,12 +93,12 @@ BodyInputField.propTypes = {
 };
 
 BodyInputField.defaultProps = {
-  placeholder: '',
+  placeholder: "",
   disabled: false,
   required: false,
   maxLength: 1000,
   minLength: 1,
-  value: '',
+  value: "",
   rows: 5,
 };
 

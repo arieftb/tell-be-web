@@ -1,10 +1,6 @@
-import {
-  ThreadRepository,
-} from '../../data/persistence/thread/ThreadRepository.js';
-import IsLoggedInUseCase from '../auth/IsLoggedInUseCase.js';
-import {
-  AuthenticationError,
-} from '../../domain/auth/model/AuthExceptions.js';
+import { ThreadRepository } from "../../data/persistence/thread/ThreadRepository.js";
+import IsLoggedInUseCase from "../auth/IsLoggedInUseCase.js";
+import { AuthenticationError } from "../../domain/auth/model/AuthExceptions.js";
 
 export class UpVoteCommentUseCase {
   constructor() {

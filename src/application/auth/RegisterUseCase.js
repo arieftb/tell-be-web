@@ -1,4 +1,4 @@
-import RegisterPayload from '../../domain/auth/model/RegisterPayload.js';
+import RegisterPayload from "../../domain/auth/model/RegisterPayload.js";
 
 export class RegisterUseCase {
   constructor(authRepository) {

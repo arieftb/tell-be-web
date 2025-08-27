@@ -1,15 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import ThreadDetail from '../../molecules/thread/ThreadDetail.jsx';
-import LoadingBar from '../../atoms/loadingbar/LoadingBar.jsx';
-import styles from './ThreadDetailSection.module.css';
+import React from "react";
+import PropTypes from "prop-types";
+import ThreadDetail from "../../molecules/thread/ThreadDetail.jsx";
+import LoadingBar from "../../atoms/loadingbar/LoadingBar.jsx";
+import styles from "./ThreadDetailSection.module.css";
 
-function ThreadDetailSection({thread, status, error}) {
-  if (status === 'loading') {
-    return <LoadingBar/>;
+function ThreadDetailSection({ thread, status, error }) {
+  if (status === "loading") {
+    return <LoadingBar />;
   }
 
-  if (status === 'failed') {
+  if (status === "failed") {
     return <div className={styles.message}>Error: {error}</div>;
   }
 
@@ -19,7 +19,7 @@ function ThreadDetailSection({thread, status, error}) {
 
   return (
     <div className={styles.threadDetailSection}>
-      <ThreadDetail thread={thread}/>
+      <ThreadDetail thread={thread} />
     </div>
   );
 }

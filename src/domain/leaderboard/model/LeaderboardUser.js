@@ -1,4 +1,4 @@
-import {z} from 'zod';
+import { z } from "zod";
 
 export const LeaderboardUserSchema = z.object({
   id: z.string(),
@@ -12,12 +12,12 @@ export default class LeaderboardUser {
     const validationResult = LeaderboardUserSchema.safeParse(payload);
     if (!validationResult.success) {
       throw new Error(
-          `LEADERBOARD_USER.VALIDATION_ERROR: 
+        `LEADERBOARD_USER.VALIDATION_ERROR: 
           ${validationResult.error.message}`,
       );
     }
 
-    const {id, name, email, avatar} = validationResult.data;
+    const { id, name, email, avatar } = validationResult.data;
     this.id = id;
     this.name = name;
     this.email = email;

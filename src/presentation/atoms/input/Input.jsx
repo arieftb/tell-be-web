@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import styles from './Input.module.css';
+import React from "react";
+import PropTypes from "prop-types";
+import styles from "./Input.module.css";
 
 function Input({
   id,
-  type = 'text',
+  type = "text",
   name,
   value,
   onChange,
@@ -30,7 +30,7 @@ function Input({
         onChange={handleOnChange}
         placeholder={placeholder}
         required={required}
-        className={`${styles.input} ${error ? styles.error : ''}`}
+        className={`${styles.input} ${error ? styles.error : ""}`}
         disabled={disabled}
         maxLength={maxLength}
         rows={rows}
@@ -47,7 +47,7 @@ function Input({
       onChange={handleOnChange}
       placeholder={placeholder}
       required={required}
-      className={`${styles.input} ${error ? styles.error : ''}`}
+      className={`${styles.input} ${error ? styles.error : ""}`}
       disabled={disabled}
       maxLength={maxLength}
       inputMode={inputMode}

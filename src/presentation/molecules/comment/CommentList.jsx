@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import CommentItem from './CommentItem.jsx';
-import styles from './CommentList.module.css';
+import React from "react";
+import PropTypes from "prop-types";
+import CommentItem from "./CommentItem.jsx";
+import styles from "./CommentList.module.css";
 
-function CommentList({comments, threadId}) {
+function CommentList({ comments, threadId }) {
   if (!comments || comments.length === 0) {
     return <div className={styles.noComments}>No comments yet.</div>;
   }
@@ -11,25 +11,27 @@ function CommentList({comments, threadId}) {
   return (
     <div className={styles.commentList}>
       {comments.map((comment) => (
-        <CommentItem key={comment.id} comment={comment} threadId={threadId}/>
+        <CommentItem key={comment.id} comment={comment} threadId={threadId} />
       ))}
     </div>
   );
 }
 
 CommentList.propTypes = {
-  comments: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-    createdAt: PropTypes.string.isRequired,
-    owner: PropTypes.shape({
+  comments: PropTypes.arrayOf(
+    PropTypes.shape({
       id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      avatar: PropTypes.string.isRequired,
-    }).isRequired,
-    upVotesBy: PropTypes.array.isRequired,
-    downVotesBy: PropTypes.array.isRequired,
-  })).isRequired,
+      content: PropTypes.string.isRequired,
+      createdAt: PropTypes.string.isRequired,
+      owner: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        avatar: PropTypes.string.isRequired,
+      }).isRequired,
+      upVotesBy: PropTypes.array.isRequired,
+      downVotesBy: PropTypes.array.isRequired,
+    }),
+  ).isRequired,
   threadId: PropTypes.string.isRequired,
 };
 

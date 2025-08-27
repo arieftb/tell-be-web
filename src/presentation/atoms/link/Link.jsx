@@ -1,7 +1,7 @@
-import React from 'react';
-import {Link as RouterLink, useLocation} from 'react-router-dom';
-import styles from './Link.module.css';
-import PropTypes from 'prop-types';
+import React from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import styles from "./Link.module.css";
+import PropTypes from "prop-types";
 
 const Link = ({
   children,
@@ -16,8 +16,8 @@ const Link = ({
 
   const className = `
     ${styles.link}
-    ${disabled ? styles.disabled : ''}
-    ${external ? styles.external : ''}
+    ${disabled ? styles.disabled : ""}
+    ${external ? styles.external : ""}
   `;
 
   const handleClick = (e) => {
@@ -46,11 +46,11 @@ const Link = ({
 
   return (
     <RouterLink
-      to={disabled ? '#' : to}
+      to={disabled ? "#" : to}
       className={className}
       onClick={handleClick}
       aria-disabled={disabled}
-      aria-current={isActive ? 'page' : undefined}
+      aria-current={isActive ? "page" : undefined}
       {...props}
     >
       {children}

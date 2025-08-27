@@ -1,9 +1,9 @@
-import {ValidationError} from './AuthExceptions.js';
-import {Email} from '../../user/model/valueobject/Email.js';
-import {Password} from './valueobject/Password.js';
+import { ValidationError } from "./AuthExceptions.js";
+import { Email } from "../../user/model/valueobject/Email.js";
+import { Password } from "./valueobject/Password.js";
 
 export default class LoginPayload {
-  constructor({email, password}) {
+  constructor({ email, password }) {
     this.email = new Email(email);
     this.password = new Password(password);
 
@@ -12,11 +12,11 @@ export default class LoginPayload {
 
   validate() {
     if (!this.email.getValue()) {
-      throw new ValidationError('Email is required.');
+      throw new ValidationError("Email is required.");
     }
 
     if (!this.password.getValue()) {
-      throw new ValidationError('Password is required.');
+      throw new ValidationError("Password is required.");
     }
   }
 }

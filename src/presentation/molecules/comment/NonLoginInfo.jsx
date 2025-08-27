@@ -1,6 +1,6 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
-import styles from './NonLoginInfo.module.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import styles from "./NonLoginInfo.module.css";
 
 const NonLoginInfo = () => {
   return (

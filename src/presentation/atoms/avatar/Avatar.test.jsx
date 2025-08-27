@@ -1,10 +1,10 @@
-import PropTypes from 'prop-types';
-import {render, screen, cleanup} from '@testing-library/react';
-import {vi} from 'vitest';
-import Avatar from './Avatar';
-import AvatarModule from './Avatar.module.css';
+import PropTypes from "prop-types";
+import { render, screen, cleanup } from "@testing-library/react";
+import { vi } from "vitest";
+import Avatar from "./Avatar";
+import AvatarModule from "./Avatar.module.css";
 
-describe('Avatar Component', () => {
+describe("Avatar Component", () => {
   // Mock console.error and console.warn to catch PropTypes warnings
   let consoleErrorSpy;
   let consoleWarnSpy;
@@ -12,10 +12,10 @@ describe('Avatar Component', () => {
 
   beforeEach(() => {
     originalNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = 'development'; // Ensure React is in development mode for PropTypes
+    process.env.NODE_ENV = "development"; // Ensure React is in development mode for PropTypes
 
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -26,19 +26,19 @@ describe('Avatar Component', () => {
   });
 
   // Test Case 1: Renders <img> with correct src and alt
-  it('should render an <img> element with the correct src and alt attributes', () => {
-    const src = 'https://example.com/avatar.jpg';
-    const alt = 'User Avatar';
+  it("should render an <img> element with the correct src and alt attributes", () => {
+    const src = "https://example.com/avatar.jpg";
+    const alt = "User Avatar";
     render(<Avatar src={src} alt={alt} />);
     const avatarImage = screen.getByAltText(alt);
     expect(avatarImage).toBeInTheDocument();
-    expect(avatarImage).toHaveAttribute('src', src);
+    expect(avatarImage).toHaveAttribute("src", src);
   });
 
   // Test Case 2: Applies default medium size class when size prop is not provided
-  it('should have class avatar and default size class medium when no size prop is provided', () => {
-    const src = 'https://example.com/avatar.com/avatar.jpg';
-    const alt = 'User Avatar';
+  it("should have class avatar and default size class medium when no size prop is provided", () => {
+    const src = "https://example.com/avatar.com/avatar.jpg";
+    const alt = "User Avatar";
     render(<Avatar src={src} alt={alt} />);
     const avatarImage = screen.getByAltText(alt);
     expect(avatarImage).toHaveClass(AvatarModule.avatar);
@@ -47,8 +47,8 @@ describe('Avatar Component', () => {
 
   // Test Case 3: Applies small size class when size="small"
   it('should have class avatar small when size="small"', () => {
-    const src = 'https://example.com/avatar.jpg';
-    const alt = 'User Avatar';
+    const src = "https://example.com/avatar.jpg";
+    const alt = "User Avatar";
     render(<Avatar src={src} alt={alt} size="small" />);
     const avatarImage = screen.getByAltText(alt);
     expect(avatarImage).toHaveClass(AvatarModule.avatar);
@@ -57,8 +57,8 @@ describe('Avatar Component', () => {
 
   // Test Case 4: Applies large size class when size="large"
   it('should have class avatar large when size="large"', () => {
-    const src = 'https://example.com/avatar.jpg';
-    const alt = 'User Avatar';
+    const src = "https://example.com/avatar.jpg";
+    const alt = "User Avatar";
     render(<Avatar src={src} alt={alt} size="large" />);
     const avatarImage = screen.getByAltText(alt);
     expect(avatarImage).toHaveClass(AvatarModule.avatar);
@@ -66,56 +66,59 @@ describe('Avatar Component', () => {
   });
 
   // Test Case 5: Always includes the base avatar class (refactored)
-  it('should always include the base avatar class for small size', () => {
-    const src = 'https://example.com/avatar.jpg';
-    const alt = 'User Avatar';
+  it("should always include the base avatar class for small size", () => {
+    const src = "https://example.com/avatar.jpg";
+    const alt = "User Avatar";
     render(<Avatar src={src} alt={alt} size="small" />);
     expect(screen.getByAltText(alt)).toHaveClass(AvatarModule.avatar);
   });
 
-  it('should always include the base avatar class for medium size', () => {
-    const src = 'https://example.com/avatar.jpg';
-    const alt = 'User Avatar';
+  it("should always include the base avatar class for medium size", () => {
+    const src = "https://example.com/avatar.jpg";
+    const alt = "User Avatar";
     render(<Avatar src={src} alt={alt} size="medium" />);
     expect(screen.getByAltText(alt)).toHaveClass(AvatarModule.avatar);
   });
 
-  it('should always include the base avatar class for large size', () => {
-    const src = 'https://example.com/avatar.jpg';
-    const alt = 'User Avatar';
+  it("should always include the base avatar class for large size", () => {
+    const src = "https://example.com/avatar.jpg";
+    const alt = "User Avatar";
     render(<Avatar src={src} alt={alt} size="large" />);
     expect(screen.getByAltText(alt)).toHaveClass(AvatarModule.avatar);
   });
 
-  it('should always include the base avatar class for default size', () => {
-    const src = 'https://example.com/avatar.jpg';
-    const alt = 'User Avatar';
+  it("should always include the base avatar class for default size", () => {
+    const src = "https://example.com/avatar.jpg";
+    const alt = "User Avatar";
     render(<Avatar src={src} alt={alt} />);
     expect(screen.getByAltText(alt)).toHaveClass(AvatarModule.avatar);
   });
 
   // Test Case 6: Accessible via alt text
-  it('should be accessible via alt text', () => {
-    const src = 'https://example.com/avatar.jpg';
-    const alt = 'Accessible Avatar';
+  it("should be accessible via alt text", () => {
+    const src = "https://example.com/avatar.jpg";
+    const alt = "Accessible Avatar";
     render(<Avatar src={src} alt={alt} />);
     expect(screen.getByAltText(alt)).toBeInTheDocument();
   });
 
-
-  it('should validate PropTypes manually for invalid size', () => {
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  it("should validate PropTypes manually for invalid size", () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     PropTypes.checkPropTypes(
       Avatar.propTypes,
-      {src: 'https://example.com/avatar.jpg', alt: 'User Avatar', size: 'xlarge'},
-      'prop',
+      {
+        src: "https://example.com/avatar.jpg",
+        alt: "User Avatar",
+        size: "xlarge",
+      },
+      "prop",
       Avatar.name,
     );
 
     expect(errorSpy).toHaveBeenCalled();
     expect(errorSpy.mock.calls[0][0]).toContain(
-      'Invalid prop `size` of value `xlarge` supplied to `Avatar`',
+      "Invalid prop `size` of value `xlarge` supplied to `Avatar`",
     );
 
     errorSpy.mockRestore();

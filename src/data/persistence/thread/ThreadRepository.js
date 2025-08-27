@@ -9,11 +9,11 @@ import {
   upVoteComment,
   downVoteComment,
   neutralVoteComment,
-} from '../../infrastructure/thread/ThreadRemoteSource.js';
-import Thread from '../../../domain/thread/model/Thread.js';
-import DetailThread from '../../../domain/thread/model/DetailThread.js';
-import Comment from '../../../domain/thread/model/Comment.js';
-import Vote from '../../../domain/thread/model/Vote.js';
+} from "../../infrastructure/thread/ThreadRemoteSource.js";
+import Thread from "../../../domain/thread/model/Thread.js";
+import DetailThread from "../../../domain/thread/model/DetailThread.js";
+import Comment from "../../../domain/thread/model/Comment.js";
+import Vote from "../../../domain/thread/model/Vote.js";
 
 export class ThreadRepository {
   async getAllThreads() {
@@ -22,7 +22,7 @@ export class ThreadRepository {
       return threadsData.map((thread) => new Thread(thread));
     } catch (error) {
       // Handle errors, e.g., network issues, API errors
-      console.error('Error fetching threads:', error);
+      console.error("Error fetching threads:", error);
       throw error; // Re-throw or return a specific error type
     }
   }
@@ -42,7 +42,7 @@ export class ThreadRepository {
       const commentData = await submitComment(commentPayload);
       return new Comment(commentData);
     } catch (error) {
-      console.error('Error submitting comment:', error);
+      console.error("Error submitting comment:", error);
       throw error;
     }
   }
@@ -52,7 +52,7 @@ export class ThreadRepository {
       const threadData = await submitThread(threadPayload);
       return new Thread(threadData);
     } catch (error) {
-      console.error('Error submitting thread:', error);
+      console.error("Error submitting thread:", error);
       throw error;
     }
   }
@@ -62,7 +62,7 @@ export class ThreadRepository {
       const voteData = await upVoteThread(threadId);
       return new Vote(voteData);
     } catch (error) {
-      console.error('Error up voting thread:', error);
+      console.error("Error up voting thread:", error);
       throw error;
     }
   }
@@ -72,7 +72,7 @@ export class ThreadRepository {
       const voteData = await downVoteThread(threadId);
       return new Vote(voteData);
     } catch (error) {
-      console.error('Error down voting thread:', error);
+      console.error("Error down voting thread:", error);
       throw error;
     }
   }
@@ -82,7 +82,7 @@ export class ThreadRepository {
       const voteData = await neutralVoteThread(threadId);
       return new Vote(voteData);
     } catch (error) {
-      console.error('Error neutral voting thread:', error);
+      console.error("Error neutral voting thread:", error);
       throw error;
     }
   }
@@ -99,7 +99,7 @@ export class ThreadRepository {
       };
       return new Vote(transformedVoteData);
     } catch (error) {
-      console.error('Error up voting comment:', error);
+      console.error("Error up voting comment:", error);
       throw error;
     }
   }
@@ -116,7 +116,7 @@ export class ThreadRepository {
       };
       return new Vote(transformedVoteData);
     } catch (error) {
-      console.error('Error down voting comment:', error);
+      console.error("Error down voting comment:", error);
       throw error;
     }
   }
@@ -133,7 +133,7 @@ export class ThreadRepository {
       };
       return new Vote(transformedVoteData);
     } catch (error) {
-      console.error('Error neutral voting comment:', error);
+      console.error("Error neutral voting comment:", error);
       throw error;
     }
   }

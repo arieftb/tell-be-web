@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Avatar from '../../atoms/avatar/Avatar.jsx';
-import {ParagraphText, SmallText} from '../../atoms/text/Text.jsx';
-import styles from './UserScoreCard.module.css';
+import React from "react";
+import PropTypes from "prop-types";
+import Avatar from "../../atoms/avatar/Avatar.jsx";
+import { ParagraphText, SmallText } from "../../atoms/text/Text.jsx";
+import styles from "./UserScoreCard.module.css";
 
-const UserScoreCard = ({user, score}) => {
+const UserScoreCard = ({ user, score }) => {
   return (
     <div className={styles.card}>
       <div className={styles.userInfo}>

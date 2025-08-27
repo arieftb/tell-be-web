@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
 const AxiosClient = axios.create({
-  baseURL: 'https://forum-api.dicoding.dev/v1',
+  baseURL: "https://forum-api.dicoding.dev/v1",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 

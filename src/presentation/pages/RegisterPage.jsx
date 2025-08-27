@@ -1,9 +1,11 @@
-import React from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  registerAndLoginUser, selectAuthError, selectAuthStatus,
-} from '../redux/auth/authSlice.js';
-import RegisterTemplate from './RegisterTemplate.jsx';
+  registerAndLoginUser,
+  selectAuthError,
+  selectAuthStatus,
+} from "../redux/auth/authSlice.js";
+import RegisterTemplate from "./RegisterTemplate.jsx";
 
 export default function RegisterPage() {
   const dispatch = useDispatch();

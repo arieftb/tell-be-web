@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {H1} from '../atoms/text/Heading.jsx';
-import ThreadInputSection from '../organisms/thread/ThreadInputSection.jsx';
-import styles from './ThreadSubmitTemplate.module.css';
-import LoadingBar from '../atoms/loadingbar/LoadingBar.jsx';
-import Header from '../organisms/header/Header.jsx';
+import React from "react";
+import PropTypes from "prop-types";
+import { H1 } from "../atoms/text/Heading.jsx";
+import ThreadInputSection from "../organisms/thread/ThreadInputSection.jsx";
+import styles from "./ThreadSubmitTemplate.module.css";
+import LoadingBar from "../atoms/loadingbar/LoadingBar.jsx";
+import Header from "../organisms/header/Header.jsx";
 
-const ThreadSubmitTemplate = ({onSubmit, isLoading}) => {
+const ThreadSubmitTemplate = ({ onSubmit, isLoading }) => {
   return (
     <>
       <Header />
