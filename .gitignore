@@ -21,6 +21,10 @@ build
 # Testing
 coverage
 
+# Cypress
+cypress/videos
+cypress/screenshots
+
 # Environment variables
 .env
 .env.local
@@ -41,3 +45,7 @@ coverage
 *.sw?
 
 docs/
+
+# Storybook
+*storybook.log
+storybook-static
