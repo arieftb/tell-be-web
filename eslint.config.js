@@ -13,6 +13,7 @@ import jsxA11y from "eslint-plugin-jsx-a11y";
 import vitest from "eslint-plugin-vitest";
 import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
+import cypressPlugin from "eslint-plugin-cypress";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,6 +67,23 @@ export default defineConfig([
         ...globals.node,
         ...globals.browser,
         ...vitest.environments.env.globals,
+      },
+    },
+  },
+  {
+    files: ["cypress/**/*.{js,jsx}"],
+    plugins: {
+      cypress: cypressPlugin,
+    },
+    rules: {
+      ...cypressPlugin.configs.recommended.rules,
+      "cypress/no-unnecessary-waiting": "error",
+      "cypress/assertion-before-screenshot": "warn",
+    },
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...cypressPlugin.environments.globals,
       },
     },
   },
