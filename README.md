@@ -98,10 +98,35 @@ src/
 
 ## Testing
 
-This project utilizes Vitest for comprehensive unit testing of Redux thunks and reducers, ensuring the reliability and correctness of state management logic.
+This project implements comprehensive testing strategies to ensure code quality and functionality:
 
-- **Thunk Unit Tests**: Dedicated tests are implemented for `fetchThreads`, `fetchThreadDetail`, `submitThread`, `submitComment`, `upVoteThread`, `downVoteThread`, `neutralVoteThread`, `upVoteComment`, `downVoteComment`, and `neutralVoteComment` to verify their dispatching behavior and interactions with use cases.
-- **Reducer Unit Tests**: Extensive tests cover the initial state, direct reducers (`resetSubmitThreadStatus`, `setSelectedCategory`), and the `pending`, `fulfilled`, and `rejected` states of all thunks, ensuring proper state updates.
+### Unit Testing
+- **Vitest** - For unit testing of Redux thunks and reducers
+- **Component Testing** - Unit tests for UI components (Button, Input, LoadingBar, Heading)
+- **Thunk Unit Tests**: Dedicated tests for `fetchThreads`, `fetchThreadDetail`, `submitThread`, `submitComment`, `upVoteThread`, `downVoteThread`, `neutralVoteThread`, `upVoteComment`, `downVoteComment`, and `neutralVoteComment`
+- **Reducer Unit Tests**: Coverage for initial state, direct reducers, and all thunk states
+
+### End-to-End Testing
+- **Cypress** - For E2E testing of critical user flows
+- **Login Flow Testing** - Comprehensive authentication testing including:
+  - Valid credentials login
+  - Invalid credentials handling
+  - Form validation
+  - Error message display
+- **Page Object Model** - Maintainable test architecture
+
+### Storybook
+- **Component Documentation** - Interactive component library
+- **Button Stories** - 14 story variants covering all states
+- **Input Stories** - 18 story variants for input/textarea modes
+
+Run tests with:
+```bash
+npm test              # Unit tests
+npm run test:e2e:open # Cypress interactive mode
+npm run test:e2e      # Cypress headless mode
+npm run storybook     # Component stories
+```
 
 ## Technologies Used
 
@@ -116,6 +141,8 @@ This project utilizes Vitest for comprehensive unit testing of Redux thunks and 
 - **React Icons** - For various icons (`^5.5.0`)
 - **Zod** - For schema validation (`^4.0.17`)
 - **Vitest** - For unit testing (`^3.2.4`)
+- **Cypress** - For end-to-end testing (`^15.2.0`)
+- **Storybook** - For component documentation and testing (`^9.1.8`)
 
 ## License
 
