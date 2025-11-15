@@ -1,18 +1,32 @@
-import { BasePage } from './BasePage';
+import { BasePage } from "./BasePage";
 
 export class LoginPage extends BasePage {
   // Selectors based on actual form structure
-  get emailInput() { return '#email'; }
-  get passwordInput() { return '#password'; }
-  get loginButton() { return 'button[type="submit"]'; }
-  get errorMessage() { return '.errorMessage'; }
-  get emailError() { return '.error'; }
-  get passwordError() { return '.error'; }
-  get loginForm() { return 'form'; }
+  get emailInput() {
+    return "#email";
+  }
+  get passwordInput() {
+    return "#password";
+  }
+  get loginButton() {
+    return 'button[type="submit"]';
+  }
+  get errorMessage() {
+    return ".errorMessage";
+  }
+  get emailError() {
+    return ".error";
+  }
+  get passwordError() {
+    return ".error";
+  }
+  get loginForm() {
+    return "form";
+  }
 
   // Actions
   visitLoginPage() {
-    return this.visit('/login');
+    return this.visit("/login");
   }
 
   fillEmail(email) {
@@ -52,10 +66,10 @@ export class LoginPage extends BasePage {
   }
 
   verifyOnLoginPage() {
-    return this.verifyUrl('/login');
+    return this.verifyUrl("/login");
   }
 
   verifyNotOnLoginPage() {
-    return this.verifyUrlNotInclude('/login');
+    return this.verifyUrlNotInclude("/login");
   }
 }

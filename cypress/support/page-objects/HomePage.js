@@ -1,19 +1,27 @@
-import { BasePage } from './BasePage';
+import { BasePage } from "./BasePage";
 
 export class HomePage extends BasePage {
   // Selectors - these need to be updated based on actual app structure
-  get userMenu() { return '.user-menu, .profile-menu, nav'; }
-  get logoutButton() { return 'button:contains("Logout"), a:contains("Logout")'; }
-  get welcomeMessage() { return '.welcome, .greeting'; }
-  get navigationMenu() { return 'nav, .navigation'; }
+  get userMenu() {
+    return ".user-menu, .profile-menu, nav";
+  }
+  get logoutButton() {
+    return 'button:contains("Logout"), a:contains("Logout")';
+  }
+  get welcomeMessage() {
+    return ".welcome, .greeting";
+  }
+  get navigationMenu() {
+    return "nav, .navigation";
+  }
 
   // Actions
   visitHomePage() {
-    return this.visit('/');
+    return this.visit("/");
   }
 
   visitDashboard() {
-    return this.visit('/dashboard');
+    return this.visit("/dashboard");
   }
 
   clickUserMenu() {
@@ -48,10 +56,10 @@ export class HomePage extends BasePage {
   }
 
   verifyOnHomePage() {
-    return this.verifyUrl('/');
+    return this.verifyUrl("/");
   }
 
   verifyOnDashboard() {
-    return this.verifyUrl('/dashboard');
+    return this.verifyUrl("/dashboard");
   }
 }
