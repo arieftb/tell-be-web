@@ -1,4 +1,4 @@
-import GetAuthTokenUseCase from './GetAuthTokenUseCase.js';
+import GetAuthTokenUseCase from "./GetAuthTokenUseCase.js";
 
 export default class IsLoggedInUseCase {
   constructor() {

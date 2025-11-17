@@ -1,7 +1,5 @@
-import {
-  ThreadRepository,
-} from '../../data/persistence/thread/ThreadRepository.js';
-import IsLoggedInUseCase from '../auth/IsLoggedInUseCase.js';
+import { ThreadRepository } from "../../data/persistence/thread/ThreadRepository.js";
+import IsLoggedInUseCase from "../auth/IsLoggedInUseCase.js";
 
 export class DownVoteCommentUseCase {
   constructor() {

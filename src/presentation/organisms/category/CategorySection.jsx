@@ -1,10 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import CategoryItem from '../../molecules/category/CategoryItem.jsx';
-import styles from './CategorySection.module.css';
-import {H4} from '../../atoms/text/Heading.jsx';
+import React from "react";
+import PropTypes from "prop-types";
+import CategoryItem from "../../molecules/category/CategoryItem.jsx";
+import styles from "./CategorySection.module.css";
+import { H4 } from "../../atoms/text/Heading.jsx";
 
-const CategorySection = ({categories, selectedCategory, onSelectCategory}) => {
+const CategorySection = ({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+}) => {
   const handleCategoryClick = (category) => {
     if (selectedCategory === category) {
       onSelectCategory(null); // Unselect if already selected

@@ -1,51 +1,57 @@
-import InputField from './InputField.jsx';
-import PropTypes from 'prop-types';
-import {useCallback, useEffect, useState} from 'react';
+import InputField from "./InputField.jsx";
+import PropTypes from "prop-types";
+import { useCallback, useEffect, useState } from "react";
 
 const CategoryInputField = ({
   id,
-  label = 'Category',
+  label = "Category",
   placeholder,
   onChange,
   disabled = false,
   required = false,
   maxLength = 50,
   minLength = 1,
-  value = '',
+  value = "",
 }) => {
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const validateCategory = useCallback((category) => {
-    const valueToValidate = category || '';
+  const validateCategory = useCallback(
+    (category) => {
+      const valueToValidate = category || "";
 
-    if (required && !valueToValidate.trim()) {
-      setError(true);
-      setErrorMessage(`${label} is required`);
-      return false;
-    }
+      if (required && !valueToValidate.trim()) {
+        setError(true);
+        setErrorMessage(`${label} is required`);
+        return false;
+      }
 
-    if (valueToValidate.length > 0 && valueToValidate.length < minLength) {
-      setError(true);
-      setErrorMessage(`${label} must be at least ${minLength} characters`);
-      return false;
-    }
+      if (valueToValidate.length > 0 && valueToValidate.length < minLength) {
+        setError(true);
+        setErrorMessage(`${label} must be at least ${minLength} characters`);
+        return false;
+      }
 
-    if (valueToValidate.length > maxLength) {
-      setError(true);
-      setErrorMessage(`${label} must be less than ${maxLength} characters`);
-      return false;
-    }
+      if (valueToValidate.length > maxLength) {
+        setError(true);
+        setErrorMessage(`${label} must be less than ${maxLength} characters`);
+        return false;
+      }
 
-    setError(false);
-    setErrorMessage('');
-    return true;
-  }, [minLength, maxLength, required, label]);
+      setError(false);
+      setErrorMessage("");
+      return true;
+    },
+    [minLength, maxLength, required, label],
+  );
 
-  const handleChange = useCallback((newValue) => {
-    validateCategory(newValue);
-    onChange(newValue);
-  }, [onChange, validateCategory]);
+  const handleChange = useCallback(
+    (newValue) => {
+      validateCategory(newValue);
+      onChange(newValue);
+    },
+    [onChange, validateCategory],
+  );
 
   useEffect(() => {
     if (value) {
@@ -84,12 +90,12 @@ CategoryInputField.propTypes = {
 };
 
 CategoryInputField.defaultProps = {
-  placeholder: '',
+  placeholder: "",
   disabled: false,
   required: false,
   maxLength: 50,
   minLength: 1,
-  value: '',
+  value: "",
 };
 
 export default CategoryInputField;

@@ -1,5 +1,5 @@
-import {RegisterUseCase} from './RegisterUseCase.js';
-import LoginUseCase from './LoginUseCase.js';
+import { RegisterUseCase } from "./RegisterUseCase.js";
+import LoginUseCase from "./LoginUseCase.js";
 
 export default class RegisterAndLoginUseCase {
   constructor(authRepository) {
@@ -8,12 +8,13 @@ export default class RegisterAndLoginUseCase {
   }
 
   async execute(registrationData) {
-    console.log('RegisterAndLoginUseCase: Starting registration...');
+    console.log("RegisterAndLoginUseCase: Starting registration...");
     // First, register the user
     await this.registerUseCase.execute(registrationData);
     console.log(
-        'RegisterAndLoginUseCase: Registration successful.' +
-      ' Proceeding to login...');
+      "RegisterAndLoginUseCase: Registration successful." +
+        " Proceeding to login...",
+    );
 
     // If registration is successful, then log in the user with the same
     // credentials
@@ -21,7 +22,7 @@ export default class RegisterAndLoginUseCase {
       email: registrationData.email,
       password: registrationData.password,
     });
-    console.log('RegisterAndLoginUseCase: Login successful. Token obtained.');
+    console.log("RegisterAndLoginUseCase: Login successful. Token obtained.");
 
     return token;
   }

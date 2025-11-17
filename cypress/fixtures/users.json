@@ -1,0 +1,21 @@
+{
+  "validUser": {
+    "email": "testertebe1@arieftb.com",
+    "password": "testertebe1"
+  },
+  "invalidUser": {
+    "email": "invalid@example.com",
+    "password": "wrongPassword"
+  },
+  "invalidEmails": [
+    "invalid-email",
+    "@example.com",
+    "test@",
+    ""
+  ],
+  "edgeCasePasswords": [
+    "",
+    "a",
+    "very-long-password-that-exceeds-normal-limits-and-tests-edge-cases"
+  ]
+}

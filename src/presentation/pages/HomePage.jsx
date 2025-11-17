@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchThreads,
   selectAllThreads,
@@ -8,9 +8,9 @@ import {
   selectCategories,
   selectSelectedCategory,
   setSelectedCategory,
-} from '../redux/thread/threadSlice.js';
-import HomeTemplate from '../templates/HomeTemplate.jsx';
-import {selectIsLoggedIn} from '../redux/auth/authSlice.js';
+} from "../redux/thread/threadSlice.js";
+import HomeTemplate from "../templates/HomeTemplate.jsx";
+import { selectIsLoggedIn } from "../redux/auth/authSlice.js";
 
 function HomePage() {
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ function HomePage() {
   };
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (status === "idle") {
       dispatch(fetchThreads());
     }
   }, [status, dispatch]);

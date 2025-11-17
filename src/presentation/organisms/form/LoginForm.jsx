@@ -1,15 +1,20 @@
-import {H4} from '../../atoms/text/Heading.jsx';
-import styles from './LoginForm.module.css';
-import EmailInputField from '../../molecules/input/EmailInputField.jsx';
-import PasswordInputField from '../../molecules/input/PasswordInputField.jsx';
-import Button from '../../atoms/button/Button.jsx';
-import {useState} from 'react';
-import {SmallText} from '../../atoms/text/Text.jsx';
+import { H4 } from "../../atoms/text/Heading.jsx";
+import styles from "./LoginForm.module.css";
+import EmailInputField from "../../molecules/input/EmailInputField.jsx";
+import PasswordInputField from "../../molecules/input/PasswordInputField.jsx";
+import Button from "../../atoms/button/Button.jsx";
+import { useState } from "react";
+import { SmallText } from "../../atoms/text/Text.jsx";
 
-const LoginForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
+const LoginForm = ({
+  onSubmit,
+  isSubmitting,
+  successMessage,
+  errorMessage,
+}) => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [formErrors, setFormErrors] = useState({
     email: false,
@@ -33,14 +38,15 @@ const LoginForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
 
   const validateForm = () => {
     let valid = true;
-    const newErrors = {...formErrors};
+    const newErrors = { ...formErrors };
 
     // Validate email
     if (!formData.email.trim()) {
       newErrors.email = true;
       valid = false;
     } else {
-      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,6}$/;
+      const emailRegex =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,6}$/;
       if (!emailRegex.test(formData.email)) {
         newErrors.email = true;
         valid = false;
@@ -70,21 +76,17 @@ const LoginForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
       <H4 className={styles.title}>Login</H4>
       <form className={styles.form} onSubmit={handleSubmit}>
         {successMessage && (
-          <div className={styles.successMessage}>
-            {successMessage}
-          </div>
+          <div className={styles.successMessage}>{successMessage}</div>
         )}
         {errorMessage && (
-          <div className={styles.errorMessage}>
-            {errorMessage}
-          </div>
+          <div className={styles.errorMessage}>{errorMessage}</div>
         )}
         <section className={styles.form}>
           <EmailInputField
             id="email"
             label="Email"
             placeholder="Email"
-            onChange={handleInputChange('email')}
+            onChange={handleInputChange("email")}
             value={formData.email}
             required
           />
@@ -92,7 +94,7 @@ const LoginForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
             id="password"
             label="Password"
             placeholder="Password"
-            onChange={handleInputChange('password')}
+            onChange={handleInputChange("password")}
             value={formData.password}
             required
           />
@@ -102,7 +104,7 @@ const LoginForm = ({onSubmit, isSubmitting, successMessage, errorMessage}) => {
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Logging in...' : 'Login'}
+            {isSubmitting ? "Logging in..." : "Login"}
           </Button>
         </section>
       </form>

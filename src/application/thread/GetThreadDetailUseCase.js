@@ -1,7 +1,5 @@
-import {
-  ThreadRepository,
-} from '../../data/persistence/thread/ThreadRepository.js';
-import {GetCurrentUserUseCase} from '../user/GetCurrentUserUseCase.js';
+import { ThreadRepository } from "../../data/persistence/thread/ThreadRepository.js";
+import { GetCurrentUserUseCase } from "../user/GetCurrentUserUseCase.js";
 
 export default class GetThreadDetailUseCase {
   constructor() {
@@ -17,7 +15,10 @@ export default class GetThreadDetailUseCase {
       currentUserId = currentUser ? currentUser.id : null;
     } catch (error) {
       // If fetching current user fails (e.g., not logged in), currentUserId remains null
-      console.warn('Could not fetch current user for vote status check:', error.message);
+      console.warn(
+        "Could not fetch current user for vote status check:",
+        error.message,
+      );
     }
 
     return {
@@ -46,8 +47,12 @@ export default class GetThreadDetailUseCase {
         },
         upVotesBy: comment.upVotesBy,
         downVotesBy: comment.downVotesBy,
-        isUpVotedByCurrentUser: currentUserId ? comment.upVotesBy.includes(currentUserId) : false,
-        isDownVotedByCurrentUser: currentUserId ? comment.downVotesBy.includes(currentUserId) : false,
+        isUpVotedByCurrentUser: currentUserId
+          ? comment.upVotesBy.includes(currentUserId)
+          : false,
+        isDownVotedByCurrentUser: currentUserId
+          ? comment.downVotesBy.includes(currentUserId)
+          : false,
       })),
     };
   }

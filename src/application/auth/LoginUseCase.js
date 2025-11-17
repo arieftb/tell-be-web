@@ -1,5 +1,5 @@
-import {AuthRepository} from '../../data/persistence/auth/AuthRepository.js';
-import LoginPayload from '../../domain/auth/model/LoginPayload.js';
+import { AuthRepository } from "../../data/persistence/auth/AuthRepository.js";
+import LoginPayload from "../../domain/auth/model/LoginPayload.js";
 
 export default class LoginUseCase {
   constructor() {

@@ -1,10 +1,13 @@
-import React, {useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNavigate} from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
-  loginUser, selectAuthError, selectAuthStatus, selectAuthToken,
-} from '../redux/auth/authSlice.js';
-import LoginTemplate from './LoginTemplate.jsx';
+  loginUser,
+  selectAuthError,
+  selectAuthStatus,
+  selectAuthToken,
+} from "../redux/auth/authSlice.js";
+import LoginTemplate from "./LoginTemplate.jsx";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -14,8 +17,8 @@ export default function LoginPage() {
   const token = useSelector(selectAuthToken);
 
   useEffect(() => {
-    if (status === 'succeeded' && token) {
-      navigate('/'); // Redirect to home or dashboard after successful login
+    if (status === "succeeded" && token) {
+      navigate("/"); // Redirect to home or dashboard after successful login
     }
   }, [status, token, navigate]);
 
@@ -24,6 +27,6 @@ export default function LoginPage() {
   };
 
   return (
-    <LoginTemplate handleSubmit={handleSubmit} status={status} error={error}/>
+    <LoginTemplate handleSubmit={handleSubmit} status={status} error={error} />
   );
 }

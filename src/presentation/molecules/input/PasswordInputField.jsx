@@ -1,51 +1,57 @@
-import InputField from './InputField.jsx';
-import PropTypes from 'prop-types';
-import {useCallback, useEffect, useState} from 'react';
+import InputField from "./InputField.jsx";
+import PropTypes from "prop-types";
+import { useCallback, useEffect, useState } from "react";
 
 const PasswordInputField = ({
   id,
-  label = 'Password',
+  label = "Password",
   placeholder,
   onChange,
   disabled = false,
   required = false,
   maxLength = 255,
   minLength = 8,
-  value = '',
+  value = "",
 }) => {
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const validatePassword = useCallback((password) => {
-    const valueToValidate = password || '';
+  const validatePassword = useCallback(
+    (password) => {
+      const valueToValidate = password || "";
 
-    if (required && !valueToValidate.trim()) {
-      setError(true);
-      setErrorMessage(`${label} is required`);
-      return false;
-    }
+      if (required && !valueToValidate.trim()) {
+        setError(true);
+        setErrorMessage(`${label} is required`);
+        return false;
+      }
 
-    if (valueToValidate.length > 0 && valueToValidate.length < minLength) {
-      setError(true);
-      setErrorMessage(`${label} must be at least ${minLength} characters`);
-      return false;
-    }
+      if (valueToValidate.length > 0 && valueToValidate.length < minLength) {
+        setError(true);
+        setErrorMessage(`${label} must be at least ${minLength} characters`);
+        return false;
+      }
 
-    if (valueToValidate.length > maxLength) {
-      setError(true);
-      setErrorMessage(`${label} must be less than ${maxLength} characters`);
-      return false;
-    }
+      if (valueToValidate.length > maxLength) {
+        setError(true);
+        setErrorMessage(`${label} must be less than ${maxLength} characters`);
+        return false;
+      }
 
-    setError(false);
-    setErrorMessage('');
-    return true;
-  }, [minLength, maxLength, required, label]);
+      setError(false);
+      setErrorMessage("");
+      return true;
+    },
+    [minLength, maxLength, required, label],
+  );
 
-  const handleChange = useCallback((newValue) => {
-    validatePassword(newValue);
-    onChange(newValue);
-  }, [onChange, validatePassword]);
+  const handleChange = useCallback(
+    (newValue) => {
+      validatePassword(newValue);
+      onChange(newValue);
+    },
+    [onChange, validatePassword],
+  );
 
   useEffect(() => {
     if (value) {
@@ -84,12 +90,12 @@ PasswordInputField.propTypes = {
 };
 
 PasswordInputField.defaultProps = {
-  placeholder: '',
+  placeholder: "",
   disabled: false,
   required: false,
   maxLength: 255,
   minLength: 8,
-  value: '',
+  value: "",
 };
 
 export default PasswordInputField;

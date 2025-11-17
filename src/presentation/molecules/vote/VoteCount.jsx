@@ -1,13 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {FiThumbsUp, FiThumbsDown} from 'react-icons/fi';
-import {PiThumbsUpFill, PiThumbsDownFill} from 'react-icons/pi';
-import {SmallText} from '../../atoms/text/Text.jsx';
-import styles from './VoteCount.module.css';
+import React from "react";
+import PropTypes from "prop-types";
+import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
+import { PiThumbsUpFill, PiThumbsDownFill } from "react-icons/pi";
+import { SmallText } from "../../atoms/text/Text.jsx";
+import styles from "./VoteCount.module.css";
 
 const VoteCount = ({
-  upVotes, downVotes, onUpVote, onDownVote,
-  isUpVotedByCurrentUser, isDownVotedByCurrentUser,
+  upVotes,
+  downVotes,
+  onUpVote,
+  onDownVote,
+  isUpVotedByCurrentUser,
+  isDownVotedByCurrentUser,
 }) => {
   const handleUpVote = (e) => {
     e.preventDefault();

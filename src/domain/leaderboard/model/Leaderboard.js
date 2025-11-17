@@ -1,5 +1,5 @@
-import {z} from 'zod';
-import LeaderboardUser, {LeaderboardUserSchema} from './LeaderboardUser.js';
+import { z } from "zod";
+import LeaderboardUser, { LeaderboardUserSchema } from "./LeaderboardUser.js";
 
 export const LeaderboardSchema = z.object({
   user: LeaderboardUserSchema,
@@ -11,11 +11,11 @@ export default class Leaderboard {
     const validationResult = LeaderboardSchema.safeParse(payload);
     if (!validationResult.success) {
       throw new Error(
-          `LEADERBOARD.VALIDATION_ERROR: ${validationResult.error.message}`,
+        `LEADERBOARD.VALIDATION_ERROR: ${validationResult.error.message}`,
       );
     }
 
-    const {user, score} = validationResult.data;
+    const { user, score } = validationResult.data;
     this.user = new LeaderboardUser(user);
     this.score = score;
   }

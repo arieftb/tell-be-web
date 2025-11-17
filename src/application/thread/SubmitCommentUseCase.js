@@ -1,7 +1,5 @@
-import {
-  ThreadRepository,
-} from '../../data/persistence/thread/ThreadRepository.js';
-import CommentPayload from '../../domain/thread/model/CommentPayload.js';
+import { ThreadRepository } from "../../data/persistence/thread/ThreadRepository.js";
+import CommentPayload from "../../domain/thread/model/CommentPayload.js";
 
 export default class SubmitCommentUseCase {
   constructor() {

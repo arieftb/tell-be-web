@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {H4} from '../../atoms/text/Heading.jsx';
-import UserScoreCard from '../../molecules/leaderboard/UserScoreCard.jsx';
-import styles from './LeaderboardSection.module.css';
+import React from "react";
+import PropTypes from "prop-types";
+import { H4 } from "../../atoms/text/Heading.jsx";
+import UserScoreCard from "../../molecules/leaderboard/UserScoreCard.jsx";
+import styles from "./LeaderboardSection.module.css";
 
-const LeaderboardSection = ({leaderboards}) => {
+const LeaderboardSection = ({ leaderboards }) => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -25,14 +25,16 @@ const LeaderboardSection = ({leaderboards}) => {
 };
 
 LeaderboardSection.propTypes = {
-  leaderboards: PropTypes.arrayOf(PropTypes.shape({
-    user: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      avatar: PropTypes.string.isRequired,
-    }).isRequired,
-    score: PropTypes.number.isRequired,
-  })).isRequired,
+  leaderboards: PropTypes.arrayOf(
+    PropTypes.shape({
+      user: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        avatar: PropTypes.string.isRequired,
+      }).isRequired,
+      score: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
 };
 
 export default LeaderboardSection;
