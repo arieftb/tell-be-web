@@ -6,10 +6,13 @@ and scalable codebase. The application includes user authentication, thread and 
 ## Table of Contents
 
 - [Features](#features)
+- [Live Demo](#live-demo)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
 - [Architecture](#architecture)
 - [UI/UX Design Principles](#uiux-design-principles)
+- [Testing](#testing)
+- [CI/CD Pipeline](#cicd-pipeline)
 - [Technologies Used](#technologies-used)
 - [License](#license)
 
@@ -29,6 +32,10 @@ and scalable codebase. The application includes user authentication, thread and 
 - Neutral vote comment
 - Optimistic UI updates for voting actions (threads and comments)
 - View leaderboard
+
+## Live Demo
+
+The application is deployed and accessible at: [https://tell-be-web.vercel.app/](https://tell-be-web.vercel.app/)
 
 ## Installation
 
@@ -127,6 +134,21 @@ npm run test:e2e:open # Cypress interactive mode
 npm run test:e2e      # Cypress headless mode
 npm run storybook     # Component stories
 ```
+
+## CI/CD Pipeline
+
+This project implements automated Continuous Integration and Continuous Deployment:
+
+### Continuous Integration (GitHub Actions)
+- **Code Quality Check** - Runs ESLint to ensure code quality standards
+- **Automated Testing** - Executes unit tests with coverage reports
+- **Build Verification** - Validates that the application builds successfully
+- Triggers on push and pull requests to `main`/`master` branches
+
+### Continuous Deployment (Vercel)
+- **Automatic Deployments** - Every push to `main` triggers a production deployment
+- **Preview Deployments** - Pull requests generate preview environments
+- **Production URL**: [https://tell-be-web.vercel.app/](https://tell-be-web.vercel.app/)
 
 ## Technologies Used
 
