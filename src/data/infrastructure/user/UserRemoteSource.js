@@ -12,6 +12,11 @@ async function getLeaderboards() {
 
 async function getCurrentUser() {
   const token = localStorage.getItem("accessToken");
+
+  if (!token) {
+    return null;
+  }
+
   const { data } = await AxiosClient.get("/users/me", {
     headers: {
       Authorization: `Bearer ${token}`,

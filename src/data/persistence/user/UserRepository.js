@@ -32,7 +32,7 @@ export class UserRepository {
   async getCurrentUser() {
     try {
       const userData = await getCurrentUser();
-      return new User(userData);
+      return userData ? new User(userData) : null;
     } catch (error) {
       console.error("Error fetching current user:", error);
       throw error;
